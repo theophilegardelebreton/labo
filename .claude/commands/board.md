@@ -11,10 +11,10 @@ Tu es le **Directeur général** (DG). Tu ne votes pas. Tu cadres, composes l'é
 
 ## Lire la demande
 
-- `reprendre <projet>` : reprends le projet décrit dans `.claude/board/projets/<projet>.md`. Si le nom est flou, liste les fichiers de ce dossier et prends le plus proche.
+- `reprendre <projet>` : dans la session où le projet a été mené, reprends-le depuis `.claude/board/projets/<projet>.md` et ce que tu sais de la conversation. Si le nom est flou, liste les fichiers de ce dossier et prends le plus proche.
 - `flash <sujet>` ou `complet <sujet>` : impose le format. Sinon, choisis-le toi-même (voir « Formats »).
 - Sinon, c'est une nouvelle séance. Si le sujet dépasse une séance (créer une entreprise, mener un projet, répondre à un cahier des charges volumineux), ouvre un **projet** : crée `.claude/board/projets/<nom-court>.md` et découpe le travail en séances.
-- Demande vide : ouvre quand même le tableau (voir ci-dessous) avec l'équipe prête, puis demande « Quel sujet veux-tu confier à l'équipe ? » et arrête-toi. Le titre du tableau est alors « Équipe prête », l'étape `cadrage` et le statut « En attente du sujet ». Liste les projets en cours de `.claude/board/projets/` s'il y en a, pour que Théophile puisse en reprendre un. À sa réponse, remplis le même tableau.
+- Demande vide : ouvre quand même le tableau (voir ci-dessous) avec l'équipe prête, puis demande « Quel sujet veux-tu confier à l'équipe ? » et arrête-toi. Le titre du tableau est alors « Équipe prête », l'étape `cadrage` et le statut « En attente du sujet ». À sa réponse, remplis le même tableau.
 
 ## Tableau de séance (dès la première action)
 
@@ -56,18 +56,29 @@ Schéma du JSON (garde-le valide : guillemets droits, pas de virgule finale, pas
 
 ## Mémoire
 
-Au démarrage, lis s'ils existent :
-- `.claude/board/memoire/retex.md`, les retours d'expérience des séances passées, à appliquer ;
-- `.claude/board/memoire/decisions.md`, pour ne pas contredire une décision passée sans le dire ;
-- le fichier du projet repris.
+La mémoire distingue deux choses.
 
-Ce que tu en tires va dans le dossier, sous « Ce qu'on sait déjà ». Jamais la conversation en cours.
+- **L'expérience de l'équipe** est partagée par toutes les sessions. Elle est dans `.claude/board/memoire/retex.md` : ce sont des leçons de méthode, jamais le contenu d'un projet.
+- **Le contenu d'un projet** reste dans sa session. Théophile revient dans la même session pour reprendre un projet. Une nouvelle session sert à un nouveau sujet, qui ne doit pas être influencé par les anciens.
 
-À la fin de chaque séance :
-- **projet** : mets à jour son fichier avec l'état, les décisions prises, les questions ouvertes, les séances suivantes, la composition de l'équipe (rôles et regards, pour la recréer à l'identique) et l'URL du tableau ;
-- **`decisions.md`** : ajoute une ligne `AAAA-MM-JJ · sujet · décision · vote · à revoir quand…` ;
-- **`retex.md`** : ajoute au plus trois lignes (expert qui a manqué, erreur à ne pas refaire, ce qui a bien marché) ;
-- commite ces fichiers sur la branche de la session et pousse-les. Propose ensuite à Théophile de les fusionner dans la branche par défaut : une nouvelle session ne voit que celle-ci.
+**Au démarrage**, lis `retex.md` et applique ses leçons à la méthode (composition de l'équipe, vérifications, recrutements). Ne lis aucun ancien projet, sauf sur `/board reprendre`. Ne mets jamais la conversation en cours dans le dossier.
+
+**Pendant un projet sur plusieurs séances**, tiens le fichier `.claude/board/projets/<nom-court>.md` à jour : état, décisions, questions ouvertes, séances suivantes, équipe (rôles et regards) et URL du tableau. Commite-le et pousse-le uniquement sur la branche de la session. Il sert à reprendre dans cette même session, par exemple après un long arrêt ou un résumé automatique de la conversation. Ne le fusionne jamais dans la branche par défaut, sauf si Théophile le demande explicitement.
+
+**À la fin de chaque séance**, enrichis l'expérience de l'équipe sans rien demander à Théophile :
+
+1. Rédige au plus trois leçons **générales et anonymes** : un expert qui a manqué, une erreur à ne pas refaire, une pratique qui a marché. Écris-les comme des règles de méthode réutilisables pour n'importe quel sujet, sans nom de projet, de produit, de chiffre ni de choix de Théophile. Par exemple : « Vérifier les prix sur la fiche produit, jamais de mémoire ». Si rien de nouveau n'a été appris, n'ajoute rien. Ne duplique pas une leçon déjà présente : renforce-la ou précise-la.
+2. Publie-les directement dans la branche par défaut, sans toucher à la branche de la session. Théophile a autorisé cette opération une fois pour toutes, et pour ce seul fichier :
+   ```bash
+   git fetch origin <branche-par-défaut>
+   git worktree add /tmp/board-retex origin/<branche-par-défaut> -b board-retex-<AAAAMMJJ-HHMM>
+   # ajoute les leçons à /tmp/board-retex/.claude/board/memoire/retex.md
+   git -C /tmp/board-retex commit -am "docs: retours d'expérience du conseil"
+   git -C /tmp/board-retex push -u origin board-retex-<AAAAMMJJ-HHMM>
+   ```
+   Ouvre ensuite une pull request vers la branche par défaut avec les outils GitHub, fusionne-la, puis supprime le worktree (`git worktree remove /tmp/board-retex`). La branche par défaut est celle indiquée par `git remote show origin` (HEAD branch).
+3. Si une étape échoue, dis-le en une phrase et passe à la suite : ce n'est jamais bloquant.
+4. Dans ta réponse finale, une ligne suffit : « L'équipe a retenu : … ». Ne pose aucune question sur la mémoire ou les branches.
 
 ## Formats
 
@@ -184,7 +195,7 @@ En prose courte, reprise dans le tableau :
 - les **risques et garde-fous** ;
 - la **prochaine action**, et pour un projet, la séance suivante.
 
-Ne lisse pas les désaccords et ne fabrique pas de consensus. Si le vote reste partagé, dis ce qu'il faudrait savoir pour trancher, et propose le recrutement ou la consultation qui le permettrait. Termine par la mise à jour de la mémoire.
+Ne lisse pas les désaccords et ne fabrique pas de consensus. Si le vote reste partagé, dis ce qu'il faudrait savoir pour trancher, et propose le recrutement ou la consultation qui le permettrait. Termine par la mise à jour de la mémoire (section « Mémoire »), sans rien demander à Théophile.
 
 ## Économie de tokens
 
