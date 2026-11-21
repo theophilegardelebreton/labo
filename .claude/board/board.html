@@ -25,6 +25,7 @@
   --debat:#ff6b6b; --question:#6f93ff; --delegation:#777777; --consult:#f06595; --reponse:#51cf66;
   --ok:#51cf66; --warn:#ffa94d; --bad:#ff6b6b; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.55;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
 .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
@@ -199,22 +200,34 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
 
 <script id="seance" type="application/json">
 {
-  "titre": "Nouvelle séance",
+  "titre": "Équipe prête",
   "format": "standard",
   "etape": "cadrage",
-  "statut": "Le directeur cadre la question.",
+  "statut": "En attente du sujet.",
   "question": "",
   "projet": null,
   "options": [],
   "agents": [
-    {"id": "dg", "nom": "Directeur général", "groupe": "direction", "modele": "fort", "etat": "parle", "reflexion": "Je cadre la question et prépare le dossier."}
+    {"id": "dg", "nom": "Directeur général", "groupe": "direction", "modele": "fort", "etat": "parle", "regard": "Cadre, recrute, organise les débats, ne vote pas.", "reflexion": "J'attends le sujet pour cadrer la question et composer l'équipe."},
+    {"id": "strat", "nom": "Stratège", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Vision à long terme, cohérence avec tes objectifs, portes qu'on ferme.", "reflexion": "Prêt."},
+    {"id": "fin", "nom": "Financier", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Coûts, temps investi, retour attendu, ressources rares.", "reflexion": "Prêt."},
+    {"id": "diable", "nom": "Avocat du diable", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Attaque les hypothèses, cherche le scénario d'échec, défend l'option oubliée.", "reflexion": "Prêt."}
   ],
   "interactions": [],
   "debats": [],
   "consultation": null,
   "votes": [],
   "modules": [],
-  "vivier": [],
+  "vivier": [
+    {"pole": "Comité de direction", "roles": [["Stratège", 1], ["Financier", 1], ["Avocat du diable", 1]]},
+    {"pole": "Ingénierie et tech", "roles": [["Responsable", 0], ["Développeur", 0], ["Calcul et simulation", 0], ["Électronique", 0]]},
+    {"pole": "Produit et design", "roles": [["Responsable", 0], ["Designer", 0], ["Ergonomie", 0]]},
+    {"pole": "Marché et communication", "roles": [["Responsable", 0], ["Réseaux sociaux", 0], ["Rédacteur", 0], ["Études de marché", 0]]},
+    {"pole": "Juridique et conformité", "roles": [["Responsable", 0], ["Réglementation", 0], ["Contrats", 0]]},
+    {"pole": "Finance et gestion", "roles": [["Responsable", 0], ["Comptable", 0], ["Chiffrage", 0]]},
+    {"pole": "Achats et opérations", "roles": [["Responsable", 0], ["Acheteur sourceur", 0], ["Planning et agenda", 0]]},
+    {"pole": "Pédagogie et contenu", "roles": [["Responsable", 0], ["Correcteur", 0], ["Créateur de contenu", 0]]}
+  ],
   "journal": [],
   "synthese": null
 }
@@ -242,7 +255,7 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
   // En-tête
   document.title=d.titre||"Conseil des anciens";
   $("titre").textContent=d.titre||"Séance";
-  $("question").textContent=d.question||"Le directeur rédige le dossier.";
+  $("question").textContent=d.question||"Donne ton sujet dans la conversation : l'équipe est prête.";
   var actifs=d.agents.filter(function(a){return a.groupe!=="theophile";});
   var leg=actifs.filter(function(a){return a.modele==="leger";}).length;
   $("chips").innerHTML='<span class="chip">Format <b>'+esc(d.format||"standard")+'</b></span><span class="chip"><b>'+actifs.length+"</b> agent"+(actifs.length>1?"s":"")+'</span><span class="chip"><b>'+leg+'</b> sur modèle léger</span><span class="chip"><b>'+d.interactions.length+"</b> échange"+(d.interactions.length>1?"s":"")+"</span>";
@@ -348,9 +361,9 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
     if(a.position)h+='<dt>Position</dt><dd><span class="opt" style="background:'+oc(a.position)+'">'+esc(a.position)+"</span> "+(a.confiance?confBars(a.confiance):"")+"</dd>";
     h+='</dl><div class="think">'+esc(a.reflexion||"Pas encore de raisonnement.")+"</div>";
     if(mine.length)h+='<span class="eyebrow">Ses échanges</span><div class="msgs">'+mine.map(function(e){var t=IC[e.type]?e.type:"question";return '<div class="msg"><span class="tag" style="background:'+IC[t]+'">'+IN[t]+"</span><span><b>"+esc(short(nm(e.de)))+" → "+esc(short(nm(e.vers)))+"</b> : "+esc(e.texte)+"</span></div>";}).join("")+"</div>";
-    h+='<button type="button" class="btn" id="all">Voir tous les échanges</button>';
+    if(d.interactions.length)h+='<button type="button" class="btn" id="all">Voir tous les échanges</button>';
     $("side").innerHTML=h;
-    $("all").onclick=function(){document.querySelectorAll("#edges .edge").forEach(function(e){e.setAttribute("opacity",".85");e.setAttribute("stroke-width","2.2");});document.querySelectorAll(".sel").forEach(function(n){n.classList.remove("sel");});};
+    if($("all"))$("all").onclick=function(){document.querySelectorAll("#edges .edge").forEach(function(e){e.setAttribute("opacity",".85");e.setAttribute("stroke-width","2.2");});document.querySelectorAll(".sel").forEach(function(n){n.classList.remove("sel");});};
   }
   document.querySelectorAll(".node,.acard").forEach(function(n){n.addEventListener("click",function(){select(n.dataset.id);});n.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(n.dataset.id);}});});
   var talking=d.agents.filter(function(a){return a.etat==="parle"||a.etat==="reflexion";})[0];
