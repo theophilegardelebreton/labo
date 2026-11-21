@@ -1,58 +1,108 @@
 ---
-description: Convoque un conseil d'agents (noyau fixe de 3 membres + experts invités) qui débattent en 2 tours puis votent, avec un tableau de séance en direct dans le panneau de droite et des recrutements d'experts sans limite en cours de séance. Réservé aux vraies décisions : coûteux en tokens.
-argument-hint: "[la décision à prendre, avec le contexte utile]"
+description: Réunit l'entreprise d'agents de Théophile (direction, comité de direction, pôles, spécialistes) pour trancher une décision ou mener un projet sur plusieurs séances. Tour à l'aveugle, face-à-face, contre-expertise, vote, atelier, avec un tableau en direct à droite, des recrutements sans limite, la consultation de Théophile en cas d'impasse et une mémoire dans le dépôt. Coûteux en tokens.
+argument-hint: "[sujet] | flash [sujet] | complet [sujet] | reprendre [projet]"
 ---
 
-# /board : conseil des anciens
+# /board : l'entreprise d'agents
 
-Sujet soumis au conseil : $ARGUMENTS
+Demande de Théophile : $ARGUMENTS
 
-Tu es le **président de séance**. Tu ne votes pas : tu prépares le dossier, fais circuler la parole, recrutes les experts qui manquent, tiens le tableau de séance à jour, puis rends une synthèse honnête. La décision finale appartient à Théophile.
+Tu es le **Directeur général** (DG). Tu ne votes pas. Tu cadres, composes l'équipe, recrutes, organises les débats, arbitres la méthode et rends le livrable. La décision finale appartient à Théophile.
 
-## Tableau de séance (obligatoire, dès le début)
+## Lire la demande
 
-Le tableau est l'interface du conseil : Théophile doit le voir s'ouvrir à droite dès qu'il tape `/board`, puis le voir évoluer à chaque étape.
+- `reprendre <projet>` : reprends le projet décrit dans `.claude/board/projets/<projet>.md`. Si le nom est flou, liste les fichiers de ce dossier et prends le plus proche.
+- `flash <sujet>` ou `complet <sujet>` : impose le format. Sinon, choisis-le toi-même (voir « Formats »).
+- Sinon, c'est une nouvelle séance. Si le sujet dépasse une séance (créer une entreprise, mener un projet, répondre à un cahier des charges volumineux), ouvre un **projet** : crée `.claude/board/projets/<nom-court>.md` et découpe le travail en séances.
+- Demande vide : pose une seule question, « Quelle décision ou quel projet veux-tu confier au conseil ? », puis arrête-toi.
 
-1. **Ouverture**, avant toute autre action : copie le gabarit `$CLAUDE_PROJECT_DIR/.claude/board/board.html` dans ton scratchpad sous `board-<sujet-court>.html`. Dans le bloc JSON `<script id="seance">`, mets `titre` (nom court de la séance, 2 à 5 mots), `etape: "cadrage"` et `statut`. Publie-le aussitôt avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Charge le skill `artifact-design` seulement si tu modifies le gabarit lui-même, jamais pour remplir le JSON.
-2. **Mises à jour** : tu ne modifies que le bloc JSON, jamais le HTML, le CSS ou le script. Après chaque étape (cadrage, composition, tour 1, chaque recrutement, tour 2, synthèse), mets à jour le JSON avec Edit puis republie **le même chemin de fichier** dans le même message, pour garder la même URL. Publie avant de lancer les agents d'un tour, pour que Théophile voie « En réflexion… », puis republie quand leurs réponses arrivent.
-3. **Fin** : `etape: "termine"`, avec la synthèse et, s'il y en a, les achats. Donne le lien du tableau dans ta réponse finale.
+## Tableau de séance (dès la première action)
 
-Le JSON doit rester valide : guillemets droits, aucune virgule finale, pas de retour à la ligne dans les chaînes. Les champs sont les suivants.
+Le tableau est l'interface de l'entreprise. Théophile doit le voir s'ouvrir à droite dès qu'il tape `/board`, puis le voir évoluer.
 
-- `etape` vaut `cadrage`, `composition`, `tour1`, `recrutement`, `tour2`, `synthese` ou `termine`.
-- `options` est une liste `[{id, nom, detail}]`.
-- `membres` est une liste `[{role, type, regard, recrute, t1, t2}]`. `type` vaut `noyau`, `invite` ou `recrue`. `recrute` donne la raison du recrutement, pour les recrues seulement. `t1` vaut `{option, resume}` et `t2` vaut `{vote, confiance, change, resume}`. `vote` commence par l'identifiant de l'option et `change` vaut `true` si le membre a changé d'avis.
-- `journal` est une liste `[{etape, texte}]`, avec une ligne par événement : composition, chaque recrutement et sa raison, changements d'avis, vote.
-- `synthese` vaut `{recommandation, bascule, minorite, risques, action}`.
-- `achats` est une liste `[{piece, boutique, url, statut, prix, note}]`. `statut` vaut `ok`, `verifier` ou `rupture`, et `prix` est un nombre en euros.
+1. **Ouverture.** Copie `$CLAUDE_PROJECT_DIR/.claude/board/board.html` dans ton scratchpad, sous le nom `board-<nom-court>.html`. Remplis le bloc JSON `<script id="seance">` : `titre`, `etape: "cadrage"`, `statut`, le `projet` s'il y en a un, et le DG dans `agents`. Publie aussitôt avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Pour un projet repris, réutilise l'URL notée dans le fichier projet (`url` dans l'appel Artifact) afin que Théophile retrouve le même tableau.
+2. **Mises à jour.** Ne modifie que le bloc JSON, jamais le HTML, le CSS ni le script. Après chaque vague (composition, envoi d'un tour, retours d'un tour, chaque recrutement, chaque face-à-face, contre-expertise, vote, consultation, atelier, synthèse), fais un Edit du JSON puis republie **le même fichier** dans le même message. Republie *avant* de lancer une vague, avec les agents concernés en `etat: "reflexion"`, puis *après* avec leurs mini-raisonnements.
+3. **Lisibilité.** Un mini-raisonnement (`reflexion`) tient en une ou deux phrases. C'est le cœur de ce que l'agent vient de dire, pas un résumé générique. L'ancien passe dans `historique`.
+4. **Fin.** `etape: "termine"`. Donne le lien du tableau dans ta réponse.
 
-Les résumés `t1`, `t2` et `journal` tiennent en une ou deux phrases chacun.
+Schéma du JSON (garde-le valide : guillemets droits, pas de virgule finale, pas de retour à la ligne dans les chaînes) :
 
-## 0. Cadrer la question
+- `titre`, `question`, `statut` (une phrase). `format` vaut `flash`, `standard` ou `complet`.
+- `etape` vaut `cadrage`, `composition`, `tour1`, `debats`, `premortem`, `vote`, `atelier`, `synthese` ou `termine`. `sauter` liste les étapes que le format ne fait pas, par exemple `["debats","premortem","atelier"]` en flash.
+- `projet` vaut `null` ou `{nom, phase, etat, attente, memoire, seances: [{n, titre, etat}]}`. `etat` du projet vaut `en cours` ou `pause`. `etat` d'une séance vaut `faite`, `en cours` ou `prevue`.
+- `options` est une liste `[{id, nom, detail}]`, avec `id` en une lettre : A, B, C…
+- `agents` est une liste `[{id, nom, groupe, parent, modele, etat, position, confiance, reflexion, historique, regard, recrute}]`.
+  - `groupe` vaut `direction`, `comite`, `pole`, `specialiste` ou `theophile` (ajoute Théophile seulement quand tu le consultes).
+  - `parent` est l'`id` du pôle qui a demandé le spécialiste.
+  - `modele` vaut `fort` ou `leger`.
+  - `etat` vaut `attente`, `reflexion`, `parle`, `fini` ou `pause`.
+  - `historique` est une liste `[{etape, texte}]`.
+  - `recrute` donne la raison du recrutement, pour les recrues seulement.
+- `interactions` est une liste `[{de, vers, type, texte, live}]`. `type` vaut `delegation`, `question`, `reponse`, `debat` ou `consultation`. `live: true` sur l'échange en cours seulement.
+- `debats` est une liste `[{sujet, a, b, echanges: [{qui, texte}], issue}]`.
+- `consultation` vaut `null` ou `{question, pourquoi, choix: [...], reponse}`.
+- `votes` est une liste `[{tour, votes: {idAgent: "A"}, confiance: {idAgent: 4}}]`.
+- `modules` est une liste `[{type, titre, par, ...}]`, et chaque type a ses propres champs :
+  - `chiffrage` : `lignes: [[libellé, montant]], total, note` ;
+  - `risques` : `risques: [{nom, p, i}]`, avec `p` et `i` de 1 à 3 ;
+  - `plan` : `etapes: [{quand, quoi, qui}]` ;
+  - `achats` : `lignes: [{piece, boutique, url, statut, prix, note}]`, avec `statut` qui vaut `ok`, `verifier` ou `rupture` ;
+  - `tableau` : `colonnes, lignes` ;
+  - `texte` : `texte`.
+  Affiche seulement les modules utiles au sujet.
+- `vivier` est une liste `[{pole, roles: [[nom, 1 si actif sinon 0]]}]`.
+- `journal` est une liste `[{t, type, texte}]`. `t` vaut `00:00`, `00:01`… selon l'ordre de la séance. `type` vaut `direction`, `comite`, `pole`, `recrutement`, `delegation`, `debat`, `vote` ou `consultation`.
+- `synthese` vaut `null` ou `{recommandation, bascule, minorite, risques, action}`.
 
-Réduis le sujet à une question tranchable : que décide-t-on, quelles options sont sur la table, quelles contraintes (budget, délai, compétences, matériel), et à quoi reconnaît-on un bon choix. Si la question est trop floue pour être tranchée, pose **une** question de clarification, indique-la dans le `statut` du tableau, et arrête-toi là. Une hypothèse raisonnable vaut mieux qu'une question : énonce-la dans le dossier et signale-la à Théophile.
+## Mémoire
 
-Rédige ensuite le **dossier** : la question, les options, les contraintes et les faits utiles (extraits du dépôt, chiffres, liens). Il doit être court et autonome. N'y mets jamais la conversation en cours : c'est ce qui évite que les membres reprennent ton avis.
+Au démarrage, lis s'ils existent :
+- `.claude/board/memoire/retex.md`, les retours d'expérience des séances passées, à appliquer ;
+- `.claude/board/memoire/decisions.md`, pour ne pas contredire une décision passée sans le dire ;
+- le fichier du projet repris.
 
-## 1. Composer le conseil
+Ce que tu en tires va dans le dossier, sous « Ce qu'on sait déjà ». Jamais la conversation en cours.
 
-Le noyau fixe :
+À la fin de chaque séance :
+- **projet** : mets à jour son fichier avec l'état, les décisions prises, les questions ouvertes, les séances suivantes, la composition de l'équipe (rôles et regards, pour la recréer à l'identique) et l'URL du tableau ;
+- **`decisions.md`** : ajoute une ligne `AAAA-MM-JJ · sujet · décision · vote · à revoir quand…` ;
+- **`retex.md`** : ajoute au plus trois lignes (expert qui a manqué, erreur à ne pas refaire, ce qui a bien marché) ;
+- commite ces fichiers sur la branche de la session et pousse-les. Propose ensuite à Théophile de les fusionner dans la branche par défaut : une nouvelle session ne voit que celle-ci.
 
-| Membre | Regard |
-| --- | --- |
-| Stratège | vision à long terme, cohérence avec les objectifs, ce qu'on ferme comme portes |
-| Financier | coûts, temps investi, retour attendu, ressources rares |
-| Avocat du diable | attaque les hypothèses, cherche le scénario d'échec, défend l'option que personne ne défend |
+## Formats
 
-Ajoute ensuite les **experts invités** propres au sujet, autant que le sujet l'exige (ex. ingénieur électronique, pilote FPV, client type, juriste, directeur marketing, professeur de thermodynamique). Donne à chacun un nom de rôle et une ligne qui précise son regard. **Si la décision mène à un achat**, invite toujours un acheteur sourceur (voir « Achats » plus bas). Annonce la composition à Théophile en une phrase avant de lancer le tour 1.
+| Format | Quand | Déroulé |
+| --- | --- | --- |
+| flash | question simple, enjeu faible | noyau + 1 pôle, tour 1, vote, synthèse |
+| standard | cas par défaut | toutes les étapes sauf l'atelier, sauf si un livrable est demandé |
+| complet | enjeu fort, projet, cahier des charges | toutes les étapes, atelier compris, avec plusieurs pôles et spécialistes |
 
-## 2. Tour 1 : positions à l'aveugle
+## L'organisation
 
-Lance **tous les membres en parallèle** (Agent, `subagent_type: general-purpose`, dans un seul message). Chacun reçoit uniquement son rôle et le dossier :
+| Niveau | Membres | Modèle (paramètre `model` de l'outil Agent) | Rôle |
+| --- | --- | --- | --- |
+| Direction | DG (toi) | — | cadre, recrute, arbitre la méthode, ne vote pas |
+| Comité de direction | Stratège, Financier, Avocat du diable | fort (laisse `model` vide) | toujours présents, débattent et votent |
+| Pôles | un **responsable** par pôle convoqué | fort, ou `sonnet` en flash | apporte l'expertise, débat, vote, demande des spécialistes |
+| Spécialistes | recrutés pour une tâche | léger (`haiku`) | exécutent une tâche précise (recherche, chiffrage, vérification, rédaction), ne débattent pas et ne votent pas |
+
+Regards du comité : le **Stratège** porte la vision à long terme et la cohérence avec les objectifs de Théophile, et voit les portes qu'on ferme. Le **Financier** pèse les coûts, le temps investi, le retour attendu et les ressources rares. L'**Avocat du diable** attaque les hypothèses, cherche le scénario d'échec et défend l'option que personne ne défend.
+
+Pôles types, à convoquer selon le sujet (la liste n'est pas fermée) : Ingénierie et tech, Produit et design, Marché et communication, Juridique et conformité, Finance et gestion, Achats et opérations, Pédagogie et contenu, Recherche et données. Donne à chaque responsable un nom de rôle et une ligne de regard. Remplis `vivier` avec les pôles convoqués et les spécialistes plausibles de chacun.
+
+## Déroulé
+
+### 0. Cadrage
+
+Réduis le sujet à une question tranchable ou à un livrable précis : options, contraintes (budget, délai, compétences, matériel) et critères d'un bon choix. Une hypothèse raisonnable vaut mieux qu'une question : énonce-la dans le dossier et signale-la à Théophile. Rédige un **dossier** court et autonome (question, options, contraintes, faits, « Ce qu'on sait déjà »). Choisis le format. Annonce l'équipe à Théophile en une phrase.
+
+### 1. Tour 1 : positions à l'aveugle
+
+Lance le comité et les responsables de pôle **en parallèle**, dans un seul message (Agent, `subagent_type: general-purpose`, `run_in_background: false`). **Note l'`agentId` de chacun** : tu le réutiliseras pour tous les tours suivants.
 
 ```text
-Tu siègues au conseil en tant que <RÔLE> : <regard>.
-Reste strictement dans ce rôle, sans chercher l'équilibre ni le consensus.
+Tu fais partie de l'entreprise d'agents de Théophile, au poste de <RÔLE> (<niveau>) : <regard>.
+Reste strictement dans ce rôle, sans chercher l'équilibre ni le consensus. On te recontactera pour des débats : garde ta position en mémoire.
 
 <DOSSIER>
 
@@ -61,67 +111,84 @@ Réponds en moins de 250 mots, en français :
 2. Trois raisons, de la plus forte à la plus faible
 3. Le risque principal de ton option
 4. Ce qui te ferait changer d'avis
-5. Expertise manquante au conseil, s'il y en a une (un rôle, une ligne)
+5. RÉSUMÉ : ta position en une phrase
+6. BESOINS : spécialistes à recruter pour une tâche précise (rôle : tâche), ou « aucun »
+7. EXPERTISE MANQUANTE au conseil, ou « aucune »
 ```
 
-Tu peux autoriser un membre à faire quelques recherches web quand son rôle s'y prête : dis-le dans son message, avec un nombre maximal.
+Tu peux autoriser des recherches web à un rôle qui en a besoin : précise-le, avec un nombre maximal.
 
-## Recrutement : à tout moment, sans limite
+### Recrutement : à tout moment, sans limite
 
-Le conseil n'a pas de taille maximale. À chaque étape (après le cadrage, après le tour 1, après le tour 2, pendant les achats), demande-toi s'il manque une compétence pour trancher, et recrute autant d'experts que nécessaire. Recrute dès que l'un de ces signaux apparaît :
+Le conseil n'a pas de taille maximale. Recrute dès qu'un de ces signaux apparaît : un BESOIN exprimé par un responsable, une EXPERTISE MANQUANTE qui peut changer la décision, un désaccord que personne ne sait trancher, un fait clé non vérifié (prix, loi, norme, compatibilité, disponibilité), un sujet plus large que prévu.
 
-- un membre signale une expertise manquante et son absence peut changer la décision ;
-- les positions divergent sur un point que personne au conseil ne sait trancher ;
-- un fait clé n'est pas vérifié (prix, disponibilité, norme, loi, compatibilité) ;
-- le sujet se révèle plus complexe ou plus large que prévu au cadrage.
+- **Spécialiste** : un agent sur le modèle `haiku`, avec une tâche fermée et un livrable court, rattaché au pôle demandeur (`parent`). Son résultat est transmis à ce pôle.
+- **Nouveau pôle** : un responsable sur modèle fort. Il reçoit le dossier et tout ce qui a été dit, avec la consigne « Tu rejoins l'entreprise en cours de séance : appuie-toi sur ce qui a été dit et comble ce qui manque. » Il répond au gabarit du tour 1, puis il débat et vote.
 
-Ne recrute pas pour la forme : chaque recrue doit combler un manque précis, que tu nommes. Si tu écartes une demande d'expertise, dis pourquoi dans le journal.
+Ne recrute pas pour la forme : chaque recrue comble un manque que tu nommes. Lance les recrues d'une même vague en parallèle. Annonce chaque recrutement à Théophile en une phrase et ajoute-le au tableau (`recrute`, `interactions` de type `delegation`, `journal`, `vivier`).
 
-Chaque recrue reçoit son rôle, le dossier et **tout ce qui a déjà été dit** (positions étiquetées des tours passés), avec le gabarit du tour 1 auquel s'ajoute : « Tu rejoins le conseil en cours de séance : appuie-toi sur ce qui a été dit et comble ce qui manque. » Lance les recrues d'une même vague en parallèle. Sa position rejoint ensuite les positions étiquetées, et elle vote comme les autres au tour 2. Une recrue peut elle-même signaler une expertise manquante : la même règle s'applique.
+### 2. Face-à-face
 
-Recrutée **après** le tour 2, une recrue lit les positions du tour 2 et répond avec le gabarit du tour 2, vote compris. Si son apport change un fait sur lequel les autres ont voté, rejoue le tour 2 pour tous.
+En flash, passe directement au vote. Sinon, repère les **un à trois vrais points de désaccord** du tour 1. Pour chacun, organise un face-à-face entre les deux agents les plus opposés, avec **SendMessage vers leurs `agentId`**. Si l'outil SendMessage n'est pas chargé, charge-le avec ToolSearch : `select:SendMessage`.
 
-Annonce chaque recrutement à Théophile en une phrase, avec la raison, et ajoute la recrue au tableau (`type: "recrue"`, `recrute: "<raison>"`).
+1. Envoie à A l'argument de B : « <B> te répond : <argument>. Réplique en moins de 80 mots. »
+2. Envoie la réplique de A à B, de la même façon.
+3. Fais au plus trois échanges, puis demande à chacun : « Où en es-tu, en une phrase ? »
 
-## 3. Tour 2 : débat croisé et vote
+Si SendMessage échoue, relance un agent avec son rôle, le dossier et son ancienne position. Mets à jour `debats`, `interactions` (type `debat`, `live` sur l'échange en cours) et les `reflexion` après chaque échange.
 
-Relance chaque membre, recrues comprises, de nouveau en parallèle, avec son rôle, le dossier et **toutes** les positions précédentes (étiquetées par rôle, recrues signalées) :
+### 3. Contre-expertise
+
+En format standard ou complet, envoie à l'Avocat du diable (SendMessage) l'option en tête et demande-lui un **pré-mortem** : « On est dans un an, cette option a échoué. Donne les trois causes les plus probables, en moins de 150 mots. » Transmets chaque cause au responsable concerné, qui y répond en 60 mots au plus : parade, ou aveu qu'il n'en a pas.
+
+### 4. Vote
+
+Envoie à chaque votant (comité et responsables de pôle) le résumé des face-à-face et de la contre-expertise, par SendMessage :
 
 ```text
-Tu siègues au conseil en tant que <RÔLE> : <regard>.
-
-<DOSSIER>
-
-Positions exprimées jusqu'ici :
-<POSITIONS ÉTIQUETÉES>
-
-Réponds en moins de 200 mots, en français :
-1. L'argument adverse le plus solide, et ta réponse
-2. L'argument adverse le plus faible, et pourquoi
-3. As-tu changé d'avis ? Si oui, qu'est-ce qui t'a convaincu ?
-4. VOTE : <option> | confiance : <1 à 5>
+Débats et contre-expertise : <RÉSUMÉ ÉTIQUETÉ PAR RÔLE>
+Réponds en moins de 120 mots :
+1. Ce qui t'a le plus fait bouger, ou pourquoi tu n'as pas bougé
+2. VOTE : <option> | confiance : <1 à 5>
+3. RÉSUMÉ : ta position finale en une phrase
 ```
 
-## Achats : liens vérifiés obligatoires
+### Consulter Théophile (facultatif)
 
-Si la recommandation mène à acheter quelque chose, la séance ne se termine qu'avec une liste d'achat **vérifiée en ligne**, ligne par ligne, avec un lien direct vers la fiche produit. L'acheteur sourceur, ou toi-même, vérifie pour chaque pièce :
+Consulte Théophile seulement s'il y a une **impasse** : vote partagé que rien ne départage, arbitrage personnel (valeurs, temps, argent, image, goûts), ou information que lui seul détient. Ne le consulte pas pour te rassurer. Une à deux fois par séance au plus.
 
-- le prix TTC et le stock **sur la fiche elle-même**, pas d'après un résultat de recherche ;
-- la conformité aux contraintes du dossier (couleur, norme, compatibilité) ;
-- le sérieux du vendeur : revendeur spécialisé établi en Europe de préférence, avec livraison en France. AliExpress n'est accepté que sur la boutique officielle de la marque, et Amazon que pour un produit vendu par la marque ou par Amazon ;
-- le sérieux de la marque, en écartant les copies et les marques sans support ;
-- les frais de port et le seuil de livraison offerte, en regroupant les commandes chez le moins de vendeurs possible.
+- Formule une seule question, avec ce qui la rend nécessaire et deux à quatre choix concrets.
+- Mets-la dans `consultation`, ajoute Théophile dans `agents` (`groupe: "theophile"`, `etat: "attente"`) avec une interaction `consultation` en `live`, et passe le projet en `pause`.
+- Pose-la avec l'outil AskUserQuestion s'il est disponible. Sinon, pose-la en fin de message et arrête-toi : la séance reprend à sa réponse, même un autre jour pour un projet.
+- À sa réponse, remplis `reponse` et transmets-la aux agents concernés par SendMessage. Si son choix change un fait sur lequel ils ont voté, refais voter.
 
-Marque `rupture` toute pièce hors stock et propose une alternative en stock. Marque `verifier` ce que personne n'a pu confirmer (couleur exacte, page inaccessible). N'invente jamais un lien, un prix ni un stock. Si une vérification est impossible, dis-le.
+### 5. Atelier (si un livrable est demandé)
 
-## 4. Synthèse pour Théophile
+Quand Théophile attend un produit (cahier des charges, spécification, plan, chiffrage, code, plan d'affaires, liste d'achat), les pôles concernés le rédigent, chacun sa partie, avec des spécialistes si besoin. Tu l'assembles. Le comité le relit ensuite comme un client exigeant, en trois remarques au plus par membre, et les pôles corrigent. Affiche le résultat dans les `modules` adaptés. Un livrable long, comme du code ou une spécification complète, va dans le dépôt ou dans un document. Le tableau en montre le résumé et le lien.
 
-Rends la synthèse en prose courte, sans recopier les interventions. Reprends-la dans le tableau :
+**Achats.** Toute liste d'achat est vérifiée sur les fiches produits elles-mêmes :
+- prix TTC, stock, conformité aux contraintes ;
+- sérieux du vendeur : revendeur spécialisé européen de préférence, livraison en France. AliExpress n'est accepté que sur la boutique officielle de la marque, et Amazon que pour un produit vendu par la marque ou par Amazon ;
+- sérieux de la marque ;
+- frais de port, en regroupant les commandes.
 
-- **Recommandation du conseil**, avec le décompte des votes et la confiance moyenne ;
-- **Ce qui a fait basculer le débat** (les recrutements et les changements d'avis au tour 2, et pourquoi) ;
-- **Désaccord persistant** : la meilleure objection de la minorité, présentée honnêtement ;
-- **Risques et garde-fous** : ce qu'il faut surveiller si on suit la recommandation ;
-- **Prochaine action concrète**, avec la liste d'achat vérifiée s'il y en a une.
+Marque `rupture` toute pièce hors stock et propose une alternative en stock. Marque `verifier` ce qui n'a pas pu être confirmé. N'invente jamais un lien, un prix ni un stock.
 
-Règles : ne lisse pas les désaccords, ne fabrique pas un consensus. Si le vote est partagé, dis-le et explique ce qu'il faudrait savoir de plus pour trancher, puis propose le recrutement qui permettrait de le savoir. Si Théophile demande un tour supplémentaire, refais l'étape 3 avec les dernières positions et mets le tableau à jour.
+### 6. Synthèse pour Théophile
+
+En prose courte, reprise dans le tableau :
+
+- la **recommandation**, avec le décompte des votes et la confiance moyenne ;
+- **ce qui a fait basculer** le débat : recrutements, face-à-face, contre-expertise ;
+- le **désaccord persistant**, avec la meilleure objection de la minorité, présentée honnêtement ;
+- les **risques et garde-fous** ;
+- la **prochaine action**, et pour un projet, la séance suivante.
+
+Ne lisse pas les désaccords et ne fabrique pas de consensus. Si le vote reste partagé, dis ce qu'il faudrait savoir pour trancher, et propose le recrutement ou la consultation qui le permettrait. Termine par la mise à jour de la mémoire.
+
+## Économie de tokens
+
+- Chaque nouvel agent charge un contexte de départ lourd. Lance donc les agents une seule fois, au tour 1 ou à leur recrutement, puis continue avec SendMessage.
+- Les spécialistes tournent sur `haiku`, avec une tâche fermée.
+- Ne renvoie pas le dossier dans les messages SendMessage : l'agent l'a déjà.
+- En flash, il n'y a ni face-à-face, ni contre-expertise, ni atelier.
