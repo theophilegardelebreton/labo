@@ -1,0 +1,158 @@
+<title>Conseil des anciens</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Gabarit du tableau de séance /board. Le président ne modifie QUE le bloc JSON #seance en bas de page. */
+/* Layout : colonne de lecture unique ; frise d'étapes, conseil en cartes, vote en barres, synthèse, achats. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#1c2724; --muted:#5d6b67; --line:#d5ddda;
+  --accent:#b3741a; --accent-soft:#f6e9d4; --core:#2f5d55; --core-soft:#dcebe7; --guest:#6a4f8a; --guest-soft:#ebe4f3;
+  --ok:#2f7a4a; --warn:#a3620a; --bad:#b03a2e;
+  --display:"Archivo",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a19; --surface:#1c2422; --fg:#e4ebe8; --muted:#97a6a1; --line:#2f3a37;
+  --accent:#e0a24a; --accent-soft:#3a2e1c; --core:#7cc0b2; --core-soft:#20332f; --guest:#b9a0d8; --guest-soft:#2c2538;
+  --ok:#6cc98f; --warn:#e3a54e; --bad:#ec7f73; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a19; --surface:#1c2422; --fg:#e4ebe8; --muted:#97a6a1; --line:#2f3a37;
+  --accent:#e0a24a; --accent-soft:#3a2e1c; --core:#7cc0b2; --core-soft:#20332f; --guest:#b9a0d8; --guest-soft:#2c2538;
+  --ok:#6cc98f; --warn:#e3a54e; --bad:#ec7f73; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:32px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:1.9rem;font-weight:800} h2{font-size:1.25rem;font-weight:700} h3{font-size:.98rem;font-weight:700}
+p{margin:0;max-width:68ch}
+a{color:var(--core)} a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section{display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+.status{display:flex;gap:12px;align-items:flex-start;background:var(--accent-soft);border:1px solid var(--accent);border-radius:10px;padding:12px 16px}
+.dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:7px}
+.live .dot{animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.live .dot{animation:none}}
+.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
+.steps li{font-size:.72rem;text-align:center;padding-top:10px;border-top:4px solid var(--line);color:var(--muted)}
+.steps li.done{border-color:var(--core);color:var(--fg)}
+.steps li.now{border-color:var(--accent);color:var(--fg);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.card.recrue{border-style:dashed;border-color:var(--accent)}
+.tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;align-self:flex-start;padding:2px 7px;border-radius:4px}
+.tag.noyau{background:var(--core-soft);color:var(--core)} .tag.invite{background:var(--guest-soft);color:var(--guest)} .tag.recrue,.tag.opt{background:var(--accent-soft);color:var(--accent)}
+.regard{font-size:.85rem;color:var(--muted)}
+.turn{font-size:.86rem;border-top:1px solid var(--line);padding-top:6px}
+.turn b{font-family:var(--mono);font-size:.74rem;color:var(--muted);font-weight:500;margin-right:4px}
+.pill{display:inline-block;font-family:var(--mono);font-size:.74rem;padding:1px 7px;border-radius:999px;background:var(--core-soft);color:var(--core);margin-right:4px}
+.pill.chg{background:var(--accent-soft);color:var(--accent)}
+.vote{display:grid;grid-template-columns:minmax(0,auto) 1fr auto;gap:8px 12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.track{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bar{height:100%;background:var(--core)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.log li{display:grid;grid-template-columns:96px 1fr;gap:10px;font-size:.88rem}
+.log .eyebrow{padding-top:2px}
+.synth{display:grid;gap:10px}
+.synth div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.synth div.lead{border-color:var(--core);background:var(--core-soft)}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.prix{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+tfoot td{font-weight:600;border-bottom:none}
+.st{font-family:var(--mono);font-size:.7rem;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.st.ok{color:var(--ok);border:1px solid var(--ok)} .st.verifier{color:var(--warn);border:1px solid var(--warn)} .st.rupture{color:var(--bad);border:1px solid var(--bad)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--core)}
+.how{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px;font-size:.88rem}
+code{font-family:var(--mono);font-size:.86em}
+.empty{color:var(--muted);font-style:italic;font-size:.9rem}
+@media (max-width:520px){.steps li{font-size:.62rem}.log li{grid-template-columns:1fr;gap:0}}
+</style>
+
+<div class="wrap" id="app">
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <span class="eyebrow">Conseil des anciens · /board</span>
+    <h1 id="titre">Séance</h1>
+  </header>
+  <div class="status" id="status" role="status"><span class="dot" aria-hidden="true"></span><p id="statusText">Chargement du dossier…</p></div>
+  <ol class="steps" id="steps" aria-label="Avancement de la séance"></ol>
+  <section><h2>Question</h2><p id="question"></p><div class="grid" id="options"></div></section>
+  <section><h2>Le conseil</h2><p class="small muted" id="compte"></p><div class="grid" id="membres"></div></section>
+  <section id="voteSec"><h2>Vote</h2><div id="vote"></div></section>
+  <section id="synthSec"><h2>Synthèse du président</h2><div class="synth" id="synth"></div></section>
+  <section id="achatSec"><h2>Liste d'achat vérifiée</h2><div id="achats"></div></section>
+  <section><h2>Journal de séance</h2><ul class="log" id="journal"></ul></section>
+  <details>
+    <summary>Comment fonctionne le conseil</summary>
+    <div class="how">
+      <p>Les membres ne se parlent jamais directement : chacun est un agent isolé qui ne reçoit que ce que le président lui transmet. Au tour 1, chacun ne voit que son rôle et le dossier. Au tour 2, il lit toutes les positions, répond aux arguments adverses et vote avec une confiance de 1 à 5.</p>
+      <p>Le président recrute autant d'experts que nécessaire, à tout moment, dès qu'une compétence manque. Une recrue reçoit le dossier et tout ce qui a déjà été dit, puis prend position et vote. Si une recrue change la donne après le vote, le tour 2 est rejoué.</p>
+      <p>Le président ne vote pas. La décision finale appartient à Théophile.</p>
+    </div>
+  </details>
+</div>
+
+<script id="seance" type="application/json">
+{
+  "titre": "Nouvelle séance",
+  "etape": "cadrage",
+  "statut": "Le président cadre la question.",
+  "question": "",
+  "options": [],
+  "membres": [],
+  "journal": [],
+  "synthese": null,
+  "achats": []
+}
+</script>
+
+<script>
+(function(){
+  var ETAPES=[["cadrage","Cadrage"],["composition","Composition"],["tour1","Tour 1"],["recrutement","Recrutement"],["tour2","Tour 2 et vote"],["synthese","Synthèse"]];
+  var TYPES={noyau:"Noyau",invite:"Invité",recrue:"Recrue"};
+  var ST={ok:"vérifié",verifier:"à vérifier",rupture:"rupture"};
+  function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function $(id){return document.getElementById(id);}
+  var d; try{d=JSON.parse($("seance").textContent);}catch(e){$("statusText").textContent="Le dossier de séance est illisible : "+e.message;return;}
+  document.title=d.titre?d.titre:"Conseil des anciens";
+  $("titre").textContent=d.titre||"Séance";
+  var fini=d.etape==="termine";
+  $("status").className="status"+(fini?"":" live");
+  $("statusText").innerHTML=(fini?"<strong>Séance terminée.</strong> ":"<strong>Séance en cours.</strong> ")+esc(d.statut);
+  var idx=fini?ETAPES.length:ETAPES.findIndex(function(e){return e[0]===d.etape;});
+  $("steps").innerHTML=ETAPES.map(function(e,i){return '<li class="'+(i<idx?"done":i===idx?"now":"")+'">'+e[1]+"</li>";}).join("");
+  $("question").textContent=d.question||"Le président rédige le dossier.";
+  $("options").innerHTML=(d.options||[]).map(function(o){return '<div class="card"><span class="tag opt">Option '+esc(o.id)+"</span><h3>"+esc(o.nom)+'</h3><p class="regard">'+esc(o.detail)+"</p></div>";}).join("");
+  var m=d.membres||[];
+  var nr=m.filter(function(x){return x.type==="recrue";}).length;
+  $("compte").textContent=m.length?m.length+" membres"+(nr?", dont "+nr+" recrue"+(nr>1?"s":"")+" en cours de séance":"")+". Le président ne vote pas.":"";
+  $("membres").innerHTML=m.length?m.map(function(x){
+    var h='<div class="card'+(x.type==="recrue"?" recrue":"")+'"><span class="tag '+esc(x.type)+'">'+(TYPES[x.type]||esc(x.type))+"</span><h3>"+esc(x.role)+'</h3><p class="regard">'+esc(x.regard)+"</p>";
+    if(x.recrute) h+='<p class="small" style="color:var(--accent)">Recruté : '+esc(x.recrute)+"</p>";
+    if(x.t1) h+='<p class="turn"><b>T1</b><span class="pill">'+esc(x.t1.option)+"</span>"+esc(x.t1.resume)+"</p>";
+    else h+='<p class="turn empty">En réflexion…</p>';
+    if(x.t2) h+='<p class="turn"><b>T2</b><span class="pill'+(x.t2.change?" chg":"")+'">'+esc(x.t2.vote)+" · "+esc(x.t2.confiance)+"/5</span>"+(x.t2.change?"<em>A changé d'avis.</em> ":"")+esc(x.t2.resume)+"</p>";
+    return h+"</div>";}).join(""):'<p class="empty">Composition annoncée après le cadrage.</p>';
+  var votes=m.filter(function(x){return x.t2&&x.t2.vote;});
+  if(votes.length){
+    var agg={};(d.options||[]).forEach(function(o){agg[o.id]={n:0,c:0,nom:o.nom};});
+    votes.forEach(function(x){var k=String(x.t2.vote).trim().charAt(0).toUpperCase();if(!agg[k])agg[k]={n:0,c:0,nom:""};agg[k].n++;agg[k].c+=Number(x.t2.confiance)||0;});
+    $("vote").innerHTML='<div class="vote">'+Object.keys(agg).map(function(k){var a=agg[k];var pct=Math.round(a.n/votes.length*100);
+      return "<span>"+esc(k)+(a.nom?" · "+esc(a.nom):"")+'</span><span class="track"><span class="bar" style="display:block;width:'+pct+'%"></span></span><span class="num">'+a.n+" voix"+(a.n?" · "+(a.c/a.n).toFixed(1).replace(".",",")+"/5":"")+"</span>";}).join("")+"</div>";
+  } else $("vote").innerHTML='<p class="empty">Le vote a lieu au tour 2.</p>';
+  var s=d.synthese;
+  $("synth").innerHTML=s?[["Recommandation",s.recommandation,"lead"],["Ce qui a fait basculer",s.bascule],["Désaccord persistant",s.minorite],["Risques et garde-fous",s.risques],["Prochaine action",s.action]].filter(function(r){return r[1];}).map(function(r){return '<div class="'+(r[2]||"")+'"><span class="eyebrow">'+r[0]+"</span><p>"+esc(r[1])+"</p></div>";}).join(""):'<p class="empty">Rendue après le vote.</p>';
+  var a=d.achats||[];
+  if(a.length){
+    var tot=0;a.forEach(function(x){tot+=Number(x.prix)||0;});
+    $("achats").innerHTML='<div class="tablewrap"><table><thead><tr><th>Pièce</th><th>Boutique</th><th>État</th><th style="text-align:right">Prix</th></tr></thead><tbody>'+a.map(function(x){
+      var lien=/^https:\/\//.test(x.url||"")?'<a href="'+esc(x.url)+'" target="_blank" rel="noopener">'+esc(x.boutique)+"</a>":esc(x.boutique);
+      return "<tr><td><strong>"+esc(x.piece)+"</strong><br><span class='small muted'>"+esc(x.note)+"</span></td><td>"+lien+'</td><td><span class="st '+esc(x.statut)+'">'+(ST[x.statut]||esc(x.statut))+'</span></td><td class="prix">'+(Number(x.prix)||0).toFixed(2).replace(".",",")+" €</td></tr>";}).join("")+'</tbody><tfoot><tr><td colspan="3">Total hors frais de port</td><td class="prix">'+tot.toFixed(2).replace(".",",")+" €</td></tr></tfoot></table></div>";
+  } else $("achatSec").hidden=true;
+  $("journal").innerHTML=(d.journal||[]).map(function(j){return '<li><span class="eyebrow">'+esc(j.etape)+"</span><span>"+esc(j.texte)+"</span></li>";}).join("")||'<li class="empty">Rien pour l\'instant.</li>';
+})();
+</script>
