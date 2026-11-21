@@ -11,3 +11,7 @@ Le runtime des hooks est dans `.claude/ecc/` (scripts, hooks, manifests, schemas
 Le profil de hooks est fixé par `ECC_HOOK_PROFILE` (`minimal`, `standard` ou `strict`) dans le bloc `env` de `.claude/settings.json`. `ECC_HOOKS_ENABLED=false` désactive tous les hooks, et `ECC_DISABLED_HOOKS` désactive des hooks précis par leur ID (voir `.claude/ecc/hooks/hooks.metadata.json`). La GateGuard demande de présenter des faits avant le premier Bash ou la première édition d'une session : c'est le comportement normal d'ECC.
 
 Pour mettre ECC à jour, recloner le dépôt, recopier les mêmes dossiers, puis régénérer `.claude/settings.json` à partir du nouveau `hooks/hooks.json` en remplaçant `var e=process.env.CLAUDE_PLUGIN_ROOT;` par la résolution vers `.claude/ecc`.
+
+## Commandes personnelles
+
+`/board <décision>` (`.claude/commands/board.md`) convoque un conseil d'agents : un noyau fixe (Stratège, Financier, Avocat du diable) plus 1 à 3 experts invités selon le sujet, qui débattent en deux tours puis votent, avant une synthèse. Quand Théophile fait face à une décision importante et ambiguë (choix technique structurant, achat, orientation d'un projet), propose-lui de lancer `/board`, sans le lancer de toi-même car il coûte cher en tokens.
