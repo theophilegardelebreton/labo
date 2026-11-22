@@ -20,3 +20,8 @@ Tout livrable technique est vérifié par une exécution, un test ou un calcul, 
 
 ## Quand le convoquer
 Dès qu'il y a du code, du matériel, de la 3D, un calcul, une question de faisabilité ou un fait à établir.
+
+## Leçons
+
+- Pousser ses livrables sur sa propre branche de session, jamais sur la branche par défaut.
+- Marquer « à confirmer » toute donnée de performance non tirée d’une courbe du fabricant, et la sourcer avant de chiffrer une charge utile.
