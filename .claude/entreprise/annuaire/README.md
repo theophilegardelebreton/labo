@@ -6,4 +6,4 @@ Chaque fichier est la fiche de poste d'un membre permanent. Elle décrit qui il 
 
 La base de l'entreprise compte quatre directeurs polyvalents (opérations, stratégie et finances, technique et scientifique, création et communication) l'Avocat du diable et le Head of Common Sense. Les membres recrutables (Recruteur, Money Maker, Stratège prospectif) et tous les autres profils possibles sont dans `.claude/entreprise/catalogue.md`. Le Président n'en convoque que ce dont le problème a besoin, et peut créer un directeur supplémentaire si aucun ne couvre le sujet.
 
-Une nouvelle fiche suit le même gabarit : en-tête (`id`, `nom`, `type`, `rattachement`, `embauche`), puis les sections Regard, Inspirations, Compétences, Méthode et Quand le convoquer.
+Une nouvelle fiche suit le même gabarit : en-tête (`id`, `nom`, `type`, `rattachement`, `embauche`), puis les sections Regard, Inspirations, Compétences, Méthode et Quand le convoquer. Une section « Leçons » (cinq lignes au plus) s'y ajoute au fil des projets : ce sont les erreurs que ce rôle ne doit plus refaire, écrites comme des règles générales, sans aucun contenu de projet.

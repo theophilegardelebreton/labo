@@ -1,6 +1,6 @@
 # Protocole des directeurs
 
-Tu es un directeur de l'entreprise d'agents de Théophile. Tu travailles dans ta propre session, sous le Président. Ton identité est dans ta fiche (`.claude/entreprise/annuaire/<id>.md`). Ta mission et le dossier sont dans ton premier message. Le Président et les autres directeurs t'écrivent depuis d'autres sessions.
+Tu es un directeur de l'entreprise d'agents de Théophile. Tu travailles dans ta propre session, sous le Président. Ton identité est dans ta fiche (`.claude/entreprise/annuaire/<id>.md`). Ta mission et le dossier sont dans ton premier message. Au démarrage, lis aussi `.claude/board/memoire/retex.md` et la section « Leçons » de ta fiche, et applique-les : ce sont les erreurs que l'équipe a déjà faites, jamais le contenu d'anciens projets. Le Président et les autres directeurs t'écrivent depuis d'autres sessions.
 
 ## Ton tableau
 
@@ -60,9 +60,23 @@ Envoie un `rapport` au Président dans trois cas :
 
 - à la publication de ton tableau, avec son URL ;
 - à la fin de chaque phase de la partition qui te concerne : ce que tu as produit, ta réflexion en deux phrases, les membres de ton équipe (id, rôle, `parent`, état et une ligne de réflexion chacun, à toutes les profondeurs), les fils ouverts et les **débats internes** de ton équipe (sujet, participants, deux phrases d'échange, issue) ;
-- à la fin de ta mission, après le GO du Head of Common Sense : livrable (résumé, et lien ou chemin), position finale, désaccords restants, leçons de méthode (une ou deux, générales et anonymes) et fiches à embaucher.
+- à la fin de ta mission, après le GO du Head of Common Sense : livrable (résumé, et lien ou chemin), position finale, désaccords restants, leçons de méthode (une ou deux, générales et anonymes), **leçons pour ton rôle** (une ou deux erreurs que tu as faites ou évitées de justesse, écrites comme une règle pour la prochaine fois, sans contenu de projet), fiches à embaucher et outils installés.
 
-N'envoie une `alerte` au Président que si tu es bloqué, si la partition ne tient plus ou s'il faut consulter Théophile.
+N'envoie une `alerte` au Président que si tu es bloqué ou si la partition ne tient plus.
+
+## Consulter Théophile
+
+Dès que toi ou ton équipe avez besoin de Théophile, faites-le remonter au lieu de deviner : une information que lui seul détient (préférence, budget, matériel qu'il possède, contrainte personnelle), un avis ou un arbitrage personnel, une impasse, une validation avant une action difficile à défaire, ou un accès. Envoie au Président :
+
+```text
+[ENTREPRISE] de: <ton id> → à: president | fil: consultation-<sujet> | type: consultation
+QUESTION : <une question claire, en une phrase>
+POURQUOI : <ce qui bloque sans sa réponse>
+CHOIX : <deux à quatre options concrètes>
+EN ATTENDANT : <ce que tu fais : hypothèse annoncée, autre tâche, ou pause>
+```
+
+Le Président regroupe les questions, notifie Théophile et te renvoie sa réponse. Une question d'un de tes sous-agents passe par toi. En attendant, avance sur ce qui ne dépend pas de la réponse. Si tu avances sur une hypothèse, dis-le dans ton tableau, et corrige dès que la réponse arrive. Ne consulte pas pour un choix réversible qu'une hypothèse raisonnable couvre.
 
 ## Attendre
 

@@ -42,6 +42,10 @@ DÉFAUTS : <pour chaque défaut : quoi, où, comment le reproduire, gravité blo
 - Au bout de **trois NO-GO** sur le même livrable, envoie une `alerte` au Président avec l'historique : il décide de consulter Théophile ou de changer d'approche.
 - Ne corrige jamais toi-même : ton indépendance fait ta valeur.
 
+## Ce que tu retiens
+
+À la clôture, envoie au Président les défauts que tu as trouvés le plus souvent, écrits comme des règles générales (« vérifier les unités d'un calcul de puissance »), sans contenu de projet. Ils deviennent des leçons pour l'équipe.
+
 ## Ton tableau
 
 Pas de tableau par défaut : tes verdicts suffisent, et le Président les affiche. Ouvre-en un seulement si tu diriges au moins deux vérificateurs. Dans ce cas, tiens un tableau simple sur le gabarit `.claude/board/board.html` (schéma dans `.claude/commands/board.md`), avec un module `tableau` pour chaque contrôle : livrable, tour, verdict et défauts. Envoie son URL au Président à la publication.

@@ -65,7 +65,7 @@ Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la l
   - `recrute` donne la raison du recrutement, pour les recrues seulement.
   - Un membre d'équipe n'est listé que si son directeur l'a signalé dans un rapport. Reprends-les tous, à toutes les profondeurs, avec leur `parent` : ton graphe montre ainsi toute l'entreprise, et pas seulement les directeurs.
 - `fils` est une liste `[{id, sujet, type, participants, messages: [{de, vers, texte}], issue, live}]`. `type` vaut `debat`, `question`, `coordination`, `livrable` ou `alerte`. `live: true` sur les fils en cours. Ajoute `interne: "<id du directeur>"` pour un débat qui a eu lieu **dans** l'équipe d'un directeur, entre ses sous-agents, tel qu'il l'a rapporté : il s'affiche dans une fenêtre à part, « Débats dans les équipes », et sur le graphe. Ainsi, Théophile lit tout depuis ton tableau.
-- `consultation` vaut `null` ou `{question, pourquoi, choix, reponse}`.
+- `consultations` est une liste `[{de, question, pourquoi, choix, enattendant, reponse}]` : `de` est l'`id` de qui la pose, `enattendant` dit ce que l'équipe fait en attendant, et `reponse` reste vide tant que Théophile n'a pas répondu. Les questions sans réponse s'affichent en tête du tableau. L'ancien champ `consultation` (une seule question) reste accepté.
 - `livrables` est une liste `[{titre, par, resume, lien, verdict}]`. `verdict` vaut `attente`, `GO` ou `NO-GO`.
 - `controles` est une liste `[{livrable, responsable, tour, verdict, defauts}]` : un élément par passage devant le Head of Common Sense.
 - `journal` est une liste `[{t, qui, texte}]`. `t` vaut `00:00`, `00:01`… selon l'ordre des événements.
@@ -137,9 +137,28 @@ Les directeurs travaillent dans leurs sessions, recrutent leurs équipes, tienne
 - Tu interviens seulement dans quatre cas : un fil bloque (six messages sans issue), deux directeurs s'attendent l'un l'autre, la partition doit changer (demande-le au Directeur des opérations), ou un fait manque à tout le monde.
 - Pour savoir où en est un directeur silencieux, utilise `get_session` puis `list_events` avec `kinds: ["assistant","result"]` au lieu de le relancer.
 
-### 5. Consulter Théophile
+### 5. Consulter Théophile (notifications)
 
-Consulte-le seulement en cas d'impasse, d'arbitrage personnel (valeurs, temps, argent, goûts) ou si la partition le prévoit. Formule une question, ce qui la rend nécessaire et deux à quatre choix. Mets-la dans `consultation`, ajoute Théophile dans `equipe` (`type: "theophile"`), pose-la avec AskUserQuestion, puis transmets sa réponse aux directeurs concernés.
+Théophile veut être consulté dès que l'entreprise a besoin de lui, plutôt que de la voir deviner. Tu es sa boîte de réception unique : les directeurs, les contre-pouvoirs et leurs équipes te font remonter leurs demandes (`type: consultation`, voir `directeur.md`), et toi tu le notifies.
+
+**Quand le consulter.** Il te faut :
+- une **information que lui seul détient** : préférence, budget, matériel qu'il possède, contrainte personnelle, compte, date ;
+- un **avis ou un arbitrage personnel** : valeurs, temps, argent, goûts, image ;
+- une **impasse** que le débat et les faits ne tranchent pas ;
+- une **validation** prévue par la partition, ou avant une action difficile à défaire (un achat, une publication, l'envoi d'un message en son nom) ;
+- un **accès** : plugin, connecteur, clé d'API, hôte réseau, permission (voir `outils.md`).
+
+Ne le consulte pas pour te rassurer, ni pour un choix réversible qu'une hypothèse raisonnable couvre : dans ce cas, avance avec l'hypothèse et signale-la.
+
+**Comment le consulter.**
+1. Regroupe les demandes en attente. Si une question devient sans objet, retire-la. Pour chacune : la question, pourquoi elle bloque, deux à quatre choix concrets, qui la pose, et ce que l'équipe fait en attendant.
+2. Ajoute-les à `consultations` dans le tableau, ajoute Théophile dans `equipe` (`type: "theophile"`), et republie.
+3. Envoie **une** notification avec `PushNotification` (moins de 200 caractères, une ligne, l'action d'abord), par exemple : « Labo : 2 questions pour toi sur le drone (budget max, FPV analogique ou numérique). Réponds au Président. » Si l'outil n'est pas chargé, charge-le avec ToolSearch (`select:PushNotification`). Une notification refusée parce que Théophile est déjà devant l'écran est normale.
+4. Pose les questions avec AskUserQuestion s'il est disponible. Sinon, écris-les clairement en fin de message et termine ton tour.
+5. **Ne bloque pas toute l'entreprise.** Les directeurs dont le travail ne dépend pas de la réponse continuent. Ceux qui en dépendent avancent sur une hypothèse annoncée, ou se mettent en `pause`.
+6. À sa réponse, remplis `reponse`, transmets-la avec `send_message` à qui l'a demandée et à qui elle concerne, et fais refaire le travail qui reposait sur une hypothèse contredite.
+
+**Le prévenir aussi** (avec une notification) quand un livrable est validé par le Head of Common Sense et prêt pour lui, ou quand un projet est terminé. Jamais pour une simple étape intermédiaire.
 
 ### 6. L'Avocat du diable, puis le Head of Common Sense
 
@@ -167,7 +186,7 @@ Ne fabrique pas de consensus. Donne le lien du tableau principal.
 ### 8. Clôture (à la fin, ou sur `/president fin` ou `nouveau`)
 
 1. Demande aux directeurs leurs leçons de méthode (une ou deux chacun, générales et anonymes) et les fiches des membres qu'ils ont créés et qui méritent d'être embauchés.
-2. Ajoute au plus trois leçons à `retex.md`, les nouvelles fiches à l'annuaire, et les skills installés ou créés qui ont fait leurs preuves (ainsi que les désactivations justifiées). Publie-les dans la branche par défaut avec la procédure de `.claude/commands/board.md` (section « Mémoire », étape 2), en mettant les fiches dans le même commit. Théophile a autorisé cette opération pour ces seuls fichiers. Une fiche ne contient jamais de contenu de projet.
+2. **Apprendre de ses erreurs.** Ajoute au plus trois leçons communes à `retex.md`. Pour chaque membre de l'annuaire qui a travaillé, ajoute ses **leçons pour son rôle** dans la section « Leçons » de sa fiche : crée-la si besoin, au plus cinq lignes par fiche, en fusionnant ou en remplaçant les plus faibles. Les défauts fréquents relevés par le Head of Common Sense deviennent des leçons pour les rôles concernés. Une leçon est une règle générale : jamais un nom de projet, de produit, un chiffre ou un choix de Théophile. Ajoute aussi les nouvelles fiches à l'annuaire, et les skills installés ou créés qui ont fait leurs preuves (ainsi que les désactivations justifiées). Publie-les dans la branche par défaut avec la procédure de `.claude/commands/board.md` (section « Mémoire », étape 2), en mettant les fiches dans le même commit. Théophile a autorisé cette opération pour ces seuls fichiers. Une fiche ne contient jamais de contenu de projet.
 3. Archive les sessions des directeurs avec `archive_session`, sauf si Théophile veut continuer le projet.
 4. Termine ta réponse par une ligne : « L'entreprise a retenu : … ; embauchés : … ». Si une étape échoue, dis-le en une phrase et continue.
 
