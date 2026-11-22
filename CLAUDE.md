@@ -1,4 +1,4 @@
-# volt-fpv-lab
+# labo
 
 ## ECC (Everything Claude Code) installé localement
 
