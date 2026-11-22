@@ -5,19 +5,19 @@
 /* Gabarit du tableau /president. Le Président ne modifie QUE le bloc JSON #presidence en bas de page (schéma dans .claude/commands/president.md). */
 :root{
   --bg:#f7f7f6; --surface:#ffffff; --fg:#111111; --muted:#6b6b6b; --line:#e5e5e3; --soft:#f0f0ee;
-  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c; --ctrl:#0b7285;
+  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c; --ctrl:#0b7285; --diable:#c92a2a;
   --debat:#e03131; --question:#2f5bd3; --coordination:#9a9a9a; --livrable:#2f9e44; --alerte:#e67700;
   --ok:#2f9e44; --warn:#e67700;
   --display:"Inter Tight",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}
 *{box-sizing:border-box}
@@ -133,6 +133,19 @@ a{color:var(--dir)}
    "recrute": null
   },
   {
+   "id": "diable",
+   "nom": "Avocat du diable",
+   "type": "contradicteur",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Contredire tout, par principe, pour faire monter la qualité.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  },
+  {
    "id": "bonsens",
    "nom": "Head of Common Sense",
    "type": "controle",
@@ -219,7 +232,7 @@ a{color:var(--dir)}
   var nom = function(id){ return byId[id] ? byId[id].nom : id; };
   var ETATS = {attente:'en attente', travail:'au travail', debat:'en débat', fini:'fini', pause:'en pause', archive:'archivé'};
   var FILS = {debat:'débat', question:'question', coordination:'coordination', livrable:'livrable', alerte:'alerte'};
-  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', controle:'var(--ctrl)', membre:'var(--mem)', theophile:'var(--theo)'};
+  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', controle:'var(--ctrl)', contradicteur:'var(--diable)', membre:'var(--mem)', theophile:'var(--theo)'};
   var selected = 'president';
   try { selected = localStorage.getItem('presidence-sel') || selected; } catch (e) {}
   if (!byId[selected]) selected = equipe.length ? equipe[0].id : null;
@@ -258,28 +271,34 @@ a{color:var(--dir)}
       talks.length ? h('span', {class:'talk'}, 'échange avec ' + talks.join(', ')) : null);
   }
 
+  function memBtn(m){
+    return h('button', {class:'mem' + (selected === m.id ? ' sel' : ''), type:'button', onclick:function(){ select(m.id); }}, h('span', null, m.nom), stateChip(m));
+  }
+
   function organigramme(){
     var pres = equipe.filter(function(m){ return m.type === 'president'; })[0];
     var theo = equipe.filter(function(m){ return m.type === 'theophile'; });
     var dirs = equipe.filter(function(m){ return m.type === 'directeur'; });
+    var diable = equipe.filter(function(m){ return m.type === 'contradicteur'; });
     var ctrl = equipe.filter(function(m){ return m.type === 'controle'; });
+    var presMems = equipe.filter(function(m){ return m.type === 'membre' && m.parent === 'president'; });
     var org = h('div', {class:'org'});
-    if (pres) org.append(h('div', {class:'toprow'}, card(pres), ctrl.map(function(c){ return card(c, 'ctrlcard'); })));
+    if (pres) org.append(h('div', {class:'toprow'}, diable.map(function(c){ return card(c, 'ctrlcard'); }), card(pres), ctrl.map(function(c){ return card(c, 'ctrlcard'); })));
+    if (presMems.length) org.append(h('div', {class:'mems', style:'margin:8px 0 0;border-left:none;padding-left:0;flex-direction:row;flex-wrap:wrap;justify-content:center'}, presMems.map(memBtn)));
     theo.forEach(function(t){ org.append(h('div', {class:'stem'}), card(t, 'prescard')); });
     if (dirs.length) {
       org.append(h('div', {class:'stem'}));
       org.append(h('div', {class:'dirs'}, dirs.map(function(d){
         var mems = equipe.filter(function(m){ return m.type === 'membre' && m.parent === d.id; });
         return h('div', {class:'dircol'}, card(d),
-          mems.length ? h('div', {class:'mems'}, mems.map(function(m){
-            return h('button', {class:'mem' + (selected === m.id ? ' sel' : ''), type:'button', onclick:function(){ select(m.id); }}, h('span', null, m.nom), stateChip(m));
-          })) : null);
+          mems.length ? h('div', {class:'mems'}, mems.map(memBtn)) : null);
       })));
     }
     return h('section', {class:'panel'}, h('h2', null, 'Organigramme'), org,
       h('div', {class:'legend'},
         h('span', null, h('i', {class:'sw', style:'background:var(--pres)'}), 'Président'),
         h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'Directeur (session enfant)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--diable)'}), 'Avocat du diable (à part)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--ctrl)'}), 'Head of Common Sense (contrôle, à part)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'Membre d’équipe (sous-agent)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--theo)'}), 'Théophile')));
@@ -295,7 +314,7 @@ a{color:var(--dir)}
     var mesFils = fils.filter(function(f){ return arr(f.participants).indexOf(m.id) >= 0; });
     var mems = equipe.filter(function(x){ return x.parent === m.id && x.type === 'membre'; });
     return h('aside', {class:'panel side', 'aria-live':'polite'},
-      h('div', null, h('p', {class:'eyebrow'}, m.type === 'membre' ? 'membre · équipe de ' + nom(m.parent) : m.type), h('h2', {style:'margin:4px 0 0'}, m.nom)),
+      h('div', null, h('p', {class:'eyebrow'}, m.type === 'membre' ? 'membre · équipe de ' + nom(m.parent) : ({contradicteur:'contre-pouvoir', controle:'contrôle'}[m.type] || m.type)), h('h2', {style:'margin:4px 0 0'}, m.nom)),
       h('dl', {class:'kv'}, h('dt', null, 'État'), h('dd', null, stateChip(m)),
         m.mission ? [h('dt', null, 'Mission'), h('dd', null, m.mission)] : null,
         m.recrute ? [h('dt', null, 'Recruté'), h('dd', null, m.recrute)] : null,
