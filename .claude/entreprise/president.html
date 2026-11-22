@@ -653,14 +653,22 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   }
 
   function consultation(){
-    var c = data.consultation;
-    if (!c) return null;
-    return h('section', {class:'consult' + (c.reponse ? ' done' : '')},
-      h('p', {class:'eyebrow', style:'color:var(--theo)'}, c.reponse ? 'Théophile a répondu' : 'Le Président consulte Théophile'),
-      h('h2', {style:'margin:0'}, c.question),
-      c.pourquoi ? h('p', {class:'muted'}, c.pourquoi) : null,
-      h('div', {class:'chips'}, arr(c.choix).map(function(x){ return h('span', {class:'choice'}, x); })),
-      c.reponse ? h('p', null, h('strong', null, 'Réponse : '), c.reponse) : null);
+    var list = arr(data.consultations).slice();
+    if (data.consultation) list.push(data.consultation);
+    if (!list.length) return null;
+    list.sort(function(a, b){ return (a.reponse ? 1 : 0) - (b.reponse ? 1 : 0); });
+    var open = list.filter(function(c){ return !c.reponse; }).length;
+    return h('div', {style:'display:flex;flex-direction:column;gap:10px'},
+      open ? h('p', {class:'eyebrow', style:'color:var(--theo)'}, open + ' question' + (open > 1 ? 's' : '') + ' pour toi · réponds au Président') : null,
+      list.map(function(c){
+        return h('section', {class:'consult' + (c.reponse ? ' done' : '')},
+          h('p', {class:'eyebrow', style:'color:' + (c.reponse ? 'var(--muted)' : 'var(--theo)')}, (c.reponse ? 'Répondu' : 'En attente de ta réponse') + (c.de ? ' · demandé par ' + nom(c.de) : '')),
+          h('h2', {style:'margin:0'}, c.question),
+          c.pourquoi ? h('p', {class:'muted'}, c.pourquoi) : null,
+          arr(c.choix).length ? h('div', {class:'chips'}, arr(c.choix).map(function(x){ return h('span', {class:'choice'}, x); })) : null,
+          c.enattendant && !c.reponse ? h('p', {style:'font-size:.84rem'}, h('strong', null, 'En attendant : '), c.enattendant) : null,
+          c.reponse ? h('p', null, h('strong', null, 'Ta réponse : '), c.reponse) : null);
+      }));
   }
 
   function bas(){
@@ -709,8 +717,8 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
           data.phase ? h('span', {class:'chip'}, 'phase : ' + data.phase) : null,
           h('span', {class:'chip'}, nDir + ' session' + (nDir > 1 ? 's' : '') + ' directeur'),
           nLive ? h('span', {class:'chip', style:'border-color:var(--debat);color:var(--debat)'}, nLive + ' fil' + (nLive > 1 ? 's' : '') + ' en cours') : null)),
-      pointPanel(),
       consultation(),
+      pointPanel(),
       partition(),
       h('div', {class:'main'}, graph(), detail()),
       filsPanel(),
