@@ -2,8 +2,8 @@
 id: moneymaker
 nom: Money Maker
 type: membre
-rattachement: recrutable par le Président ou tout directeur
-embauche: fondateur
+rattachement: recrutable par le Président ou tout conseiller
+statut: fondateur
 ---
 
 ## Regard

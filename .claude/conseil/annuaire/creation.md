@@ -1,9 +1,9 @@
 ---
 id: creation
-nom: Directeur de la création et de la communication
-type: directeur
+nom: Conseiller de la création et de la communication
+type: conseiller
 rattachement: president
-embauche: fondateur
+statut: fondateur
 ---
 
 ## Regard

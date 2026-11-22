@@ -173,19 +173,19 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
 
 <script id="presidence" type="application/json">
 {
- "titre": "Entreprise prête",
+ "titre": "Conseil prêt",
  "probleme": "En attente du problème de Théophile.",
- "statut": "La base de l'entreprise attend sa première mission.",
+ "statut": "La base du conseil attend sa première mission.",
  "phase": "cadrage",
  "point": {
   "demande": "En attente du problème de Théophile.",
-  "etat": "L'entreprise est prête : quatre directeurs et deux contre-pouvoirs en veille.",
+  "etat": "Le conseil est prêt : quatre conseillers et deux contre-pouvoirs en veille.",
   "raisonnement": [],
   "decisions": [],
   "prochaines": [
    "Recevoir le problème",
-   "Faire écrire la partition par le Directeur des opérations",
-   "Réveiller les directeurs utiles"
+   "Faire écrire la partition par le Conseiller des opérations",
+   "Réveiller les conseillers utiles"
   ]
  },
  "partition": [],
@@ -234,9 +234,9 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   },
   {
    "id": "coo",
-   "nom": "Directeur des opérations",
+   "nom": "Conseiller des opérations",
    "court": "Opérations",
-   "type": "directeur",
+   "type": "conseiller",
    "parent": "president",
    "session": null,
    "tableau": null,
@@ -248,9 +248,9 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   },
   {
    "id": "strategie",
-   "nom": "Directeur de la stratégie et des finances",
+   "nom": "Conseiller de la stratégie et des finances",
    "court": "Stratégie et finances",
-   "type": "directeur",
+   "type": "conseiller",
    "parent": "president",
    "session": null,
    "tableau": null,
@@ -262,9 +262,9 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   },
   {
    "id": "technique",
-   "nom": "Directeur technique et scientifique",
+   "nom": "Conseiller technique et scientifique",
    "court": "Technique",
-   "type": "directeur",
+   "type": "conseiller",
    "parent": "president",
    "session": null,
    "tableau": null,
@@ -276,9 +276,9 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   },
   {
    "id": "creation",
-   "nom": "Directeur de la création et de la communication",
+   "nom": "Conseiller de la création et de la communication",
    "court": "Création",
-   "type": "directeur",
+   "type": "conseiller",
    "parent": "president",
    "session": null,
    "tableau": null,
@@ -310,7 +310,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   var nom = function(id){ return byId[id] ? byId[id].nom : id; };
   var ETATS = {attente:'en attente', travail:'au travail', debat:'en débat', fini:'fini', pause:'en pause', archive:'archivé'};
   var FILS = {debat:'débat', question:'question', coordination:'coordination', livrable:'livrable', alerte:'alerte'};
-  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', controle:'var(--ctrl)', contradicteur:'var(--diable)', membre:'var(--mem)', theophile:'var(--theo)'};
+  var COLOR = {president:'var(--pres)', conseiller:'var(--dir)', controle:'var(--ctrl)', contradicteur:'var(--diable)', membre:'var(--mem)', theophile:'var(--theo)'};
   var selected = 'president';
   try { selected = localStorage.getItem('presidence-sel') || selected; } catch (e) {}
   if (!byId[selected]) selected = equipe.length ? equipe[0].id : null;
@@ -366,7 +366,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
     for (var i = 2; i < arguments.length; i++) { var c = arguments[i]; if (c == null) continue; if (Array.isArray(c)) c.forEach(function(x){ if (x) el.append(x); }); else el.append(c); }
     return el;
   }
-  var LETTRE = {president:'', directeur:'D', contradicteur:'!', controle:'✓', membre:'M', theophile:'T'};
+  var LETTRE = {president:'', conseiller:'D', contradicteur:'!', controle:'✓', membre:'M', theophile:'T'};
   var GW = 1000, GH = 720;
 
   function layout(){
@@ -503,7 +503,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
     });
 
     var bg = sv('rect', {x:0, y:0, width:GW, height:GH, fill:'url(#pdots)', class:'gbg'});
-    var svg = sv('svg', {class:'graph', viewBox:'0 0 ' + GW + ' ' + GH, role:'img', 'aria-label':'Graphe de l’entreprise'}, defs, bg, g);
+    var svg = sv('svg', {class:'graph', viewBox:'0 0 ' + GW + ' ' + GH, role:'img', 'aria-label':'Graphe du conseil'}, defs, bg, g);
     var tip = h('div', {class:'gtip', hidden:''});
     var wrapEl = h('div', {class:'gwrap'}, svg, tip);
 
@@ -583,11 +583,11 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
       h('button', {type:'button', 'aria-label':'Dézoomer', onclick:function(){ zoomAt(1 / 1.25, GW / 2, GH / 2, true); }}, '−'),
       h('button', {type:'button', onclick:function(){ animateTo(fitView(pos)); }}, 'Recentrer'));
     return h('section', {class:'panel gpanel'},
-      h('div', {class:'ghead'}, h('div', null, h('h2', {style:'margin:0'}, 'L’entreprise'), h('p', {class:'eyebrow', style:'margin-top:4px'}, 'survole pour voir les liens · clique pour ouvrir · double-clic pour tout voir')), tools),
+      h('div', {class:'ghead'}, h('div', null, h('h2', {style:'margin:0'}, 'Le conseil'), h('p', {class:'eyebrow', style:'margin-top:4px'}, 'survole pour voir les liens · clique pour ouvrir · double-clic pour tout voir')), tools),
       wrapEl,
       h('div', {class:'legend'},
         h('span', null, h('i', {class:'sw', style:'background:var(--ceo)'}), 'Président'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'D : directeur (session)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'D : conseiller (session)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--diable)'}), '! : Avocat du diable'),
         h('span', null, h('i', {class:'sw', style:'background:var(--ctrl)'}), '✓ : Head of Common Sense'),
         h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'M : recrue (sous-agent)'),
@@ -620,7 +620,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
   function partition(){
     var p = arr(data.partition);
     if (!p.length) return null;
-    return h('section', {class:'panel'}, h('h2', null, 'Partition du Directeur des opérations'),
+    return h('section', {class:'panel'}, h('h2', null, 'Partition du Conseiller des opérations'),
       h('div', {class:'phases'}, p.map(function(x){
         var cls = x.etat === 'en cours' ? 'encours' : (x.etat || '');
         return h('div', {class:'phase ' + cls},
@@ -705,7 +705,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
 
   function render(){
     var app = document.getElementById('app');
-    var nDir = equipe.filter(function(m){ return m.type === 'directeur' && m.session; }).length;
+    var nDir = equipe.filter(function(m){ return m.type === 'conseiller' && m.session; }).length;
     var nLive = fils.filter(function(f){ return f.live; }).length;
     var parts = [
       h('header', {class:'top'},
@@ -715,7 +715,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
         h('div', {class:'chips'},
           data.statut ? h('span', {class:'chip'}, data.statut) : null,
           data.phase ? h('span', {class:'chip'}, 'phase : ' + data.phase) : null,
-          h('span', {class:'chip'}, nDir + ' session' + (nDir > 1 ? 's' : '') + ' directeur'),
+          h('span', {class:'chip'}, nDir + ' session' + (nDir > 1 ? 's' : '') + ' conseiller'),
           nLive ? h('span', {class:'chip', style:'border-color:var(--debat);color:var(--debat)'}, nLive + ' fil' + (nLive > 1 ? 's' : '') + ' en cours') : null)),
       consultation(),
       pointPanel(),

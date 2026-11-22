@@ -1,10 +1,10 @@
 # Catalogue de recrutement
 
-Le Président, les directeurs et le Recruteur piochent ici pour composer une équipe en quelques secondes, quel que soit le problème. Il y a trois sources, à combiner librement.
+Le Président, les conseillers et le Recruteur piochent ici pour composer une équipe en quelques secondes, quel que soit le problème. Il y a trois sources, à combiner librement.
 
 1. **Les fiches maison** (`annuaire/`), recrutées comme sous-agents (`general-purpose`) avec le contenu de la fiche en tête du prompt.
 2. **Les 72 agents ECC** (`.claude/agents/`), appelés par `subagent_type`. Ils sont surtout orientés logiciel.
-3. **Les rôles sur mesure** : un sous-agent `general-purpose` avec un nom de métier, un regard en une ligne et, si besoin, les **skills** du dépôt à charger (`.claude/skills/`, 328 au total). C'est la source principale hors logiciel : styliste, ingénieur textile, juriste, pilote FPV, nutritionniste, acheteur, monteur vidéo… Tout métier peut être créé.
+3. **Les rôles sur mesure** : un sous-agent `general-purpose` avec un nom de métier, un regard en une ligne et, si besoin, les **skills** du dépôt à charger (`.claude/skills/`, 328 au total). C'est la source principale hors logiciel : styliste, ingénieur textile, juriste, architecte, nutritionniste, acheteur, monteur vidéo… Tout métier peut être créé.
 
 Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichier pour vérifier qu'il convient.
 
@@ -12,11 +12,11 @@ Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichie
 
 | Fiche | Rôle | Quand |
 | --- | --- | --- |
-| `recruteur.md` | compose l'équipe d'un directeur | équipe de plus de deux personnes, ou spécialiste à trouver |
+| `recruteur.md` | compose l'équipe d'un conseiller | équipe de plus de deux personnes, ou spécialiste à trouver |
 | `money-maker.md` | maximise les gains à court terme : offre, prix, marge, premiers clients | business, vente, produit commercialisé |
 | `outilleur.md` | trouve, vérifie, installe, crée ou désactive les skills dont l'équipe a besoin | rendu à améliorer, travail répété, outil absent |
 | `visionnaire.md` | Stratège prospectif : scénarios à 1, 3 et 10 ans, potentiel maximal | business, projet à fort potentiel, choix qui engage des années |
-| `avocat-du-diable.md` | contredit tout, par principe | permanent (session à part), mais un directeur peut aussi en recruter un dans son équipe pour un débat interne |
+| `avocat-du-diable.md` | contredit tout, par principe | permanent (session à part), mais un conseiller peut aussi en recruter un dans son équipe pour un débat interne |
 
 ## Agents ECC par domaine
 
@@ -49,13 +49,13 @@ Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichie
 
 ## Combinaisons types
 
-Ce sont des points de départ, pas des recettes : le Directeur des opérations et le Recruteur adaptent.
+Ce sont des points de départ, pas des recettes : le Conseiller des opérations et le Recruteur adaptent.
 
-| Problème | Directeurs | Recrues typiques |
+| Problème | Conseillers | Recrues typiques |
 | --- | --- | --- |
 | Lancer un business | Stratégie, Création, Opérations | Money Maker, Stratège prospectif, `marketing-agent`, analyste marché (`market-research`), juriste sur mesure |
 | Créer un vêtement (un slip, par exemple) | Création, Technique, Stratégie | styliste, ingénieur textile, modéliste patronage, acheteur tissus, Money Maker si c'est pour vendre |
-| Le meilleur drone possible | Technique, Stratégie | ingénieur propulsion, électronicien, pilote FPV, acheteur sourceur, spécialiste réglementation radio |
+| Concevoir un objet technique | Technique, Stratégie | ingénieur mécanique, électronicien, modélisateur 3D, acheteur sourceur, spécialiste des normes |
 | Une application ou un site | Technique, Création | `planner`, `tdd-guide`, `code-reviewer`, `security-reviewer`, `e2e-runner`, designer UX |
 | Une vidéo | Création | scénariste, monteur (`video-editing`), motion designer (`remotion-video-creation`), `seo-specialist` |
 | Réviser un examen | Technique (scientifique) | professeur sur mesure de la matière, correcteur, générateur d'exercices |
