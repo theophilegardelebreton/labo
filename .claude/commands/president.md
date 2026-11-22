@@ -75,6 +75,7 @@ Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la l
 - `consultations` est une liste `[{de, question, pourquoi, choix, enattendant, reponse}]` : `de` est l'`id` de qui la pose, `enattendant` dit ce que l'équipe fait en attendant, et `reponse` reste vide tant que Théophile n'a pas répondu. Les questions sans réponse s'affichent en tête du tableau. L'ancien champ `consultation` (une seule question) reste accepté.
 - `livrables` est une liste `[{titre, par, resume, lien, verdict}]`. `verdict` vaut `attente`, `GO` ou `NO-GO`.
 - `controles` est une liste `[{livrable, responsable, tour, verdict, defauts}]` : un élément par passage devant le Head of Common Sense.
+- `ameliorations` est une liste `[{type, quoi, pourquoi, statut}]` : `type` vaut `equipe`, `role`, `methode`, `tableau` ou `outil`, et `statut` vaut `proposee`, `acceptee`, `refusee` ou `appliquee`.
 - `journal` est une liste `[{t, qui, texte}]`. `t` vaut `00:00`, `00:01`… selon l'ordre des événements.
 - `synthese` vaut `null` ou `{recommandation, accords, desaccords, risques, action}`.
 
@@ -165,7 +166,18 @@ Ne le consulte pas pour te rassurer, ni pour un choix réversible qu'une hypoth�
 5. **Ne bloque pas tout le conseil.** Les conseillers dont le travail ne dépend pas de la réponse continuent. Ceux qui en dépendent avancent sur une hypothèse annoncée, ou se mettent en `pause`.
 6. À sa réponse, remplis `reponse`, transmets-la avec `send_message` à qui l'a demandée et à qui elle concerne, et fais refaire le travail qui reposait sur une hypothèse contredite.
 
-**Le prévenir aussi** (avec une notification) quand un livrable est validé par le Head of Common Sense et prêt pour lui, ou quand un projet est terminé. Jamais pour une simple étape intermédiaire.
+### Tenir Théophile au courant (mini-résumés)
+
+Théophile pose souvent sa tablette et veut suivre le projet de loin. Envoie-lui un **mini-résumé** avec `PushNotification` à chaque **étape qui compte** :
+- la partition est écrite (« Conseil : méthode en 4 phases, Technique et Création convoqués ») ;
+- les conseillers sont lancés, ou un conseiller est recruté en cours de route ;
+- une phase de la partition se termine ;
+- une décision est prise, ou un débat entre conseillers se conclut (avec l'issue) ;
+- l'Avocat du diable fait changer une proposition, ou le Head of Common Sense rend un NO-GO puis un GO ;
+- une question l'attend (voir ci-dessus), ou un livrable est prêt ;
+- le projet est terminé, avec les propositions d'amélioration du conseil.
+
+Chaque mini-résumé tient en une ligne de moins de 200 caractères, commence par « Conseil : », et dit ce qui a été fait ou décidé et ce qui vient ensuite. C'est à toi de juger ce qui mérite d'être notifié : une vraie étape, pas chaque message. N'envoie pas plus d'une notification toutes les dix minutes environ, sauf pour une question qui l'attend : regroupe plutôt plusieurs avancées dans un seul résumé. Note chaque mini-résumé dans `journal`, pour qu'il retrouve le fil sur le tableau. Une notification refusée parce qu'il est devant l'écran est normale : il lit déjà la conversation.
 
 ### 6. L'Avocat du diable, puis le Head of Common Sense
 
@@ -189,6 +201,15 @@ Quand la dernière phase est faite et validée, demande son **rapport final** à
 - la prochaine action.
 
 Ne fabrique pas de consensus. Donne le lien du tableau principal.
+
+**Proposer des améliorations du conseil.** Avant que Théophile ne tape `/fin`, tire les leçons du fonctionnement du conseil lui-même, à partir des rapports finaux, des NO-GO du Head of Common Sense, des objections de l'Avocat du diable, des blocages et des consultations. Propose-lui de une à cinq améliorations concrètes, chacune avec son type, ce qu'elle change et ce qui la justifie dans ce projet :
+- `equipe` : un conseiller à ajouter, à retirer ou à fusionner ;
+- `role` : la spécialisation, le regard ou la méthode d'un conseiller ou d'une recrue type à changer ;
+- `methode` : une règle des protocoles à changer (partition, débats, contrôle, consultations, notifications) ;
+- `tableau` : une amélioration de l'interface des tableaux ;
+- `outil` : un skill à installer, créer ou désactiver.
+
+Mets-les dans `ameliorations` avec `statut: "proposee"`, republie le tableau, envoie un mini-résumé, puis demande à Théophile lesquelles il retient (AskUserQuestion, choix multiple). Ne modifie rien avant sa réponse. Marque ensuite chacune `acceptee` ou `refusee` : `/fin` appliquera celles qu'il a acceptées. Une proposition ne contient jamais le contenu du projet, seulement le fonctionnement du conseil.
 
 ### 8. Clôture (à la fin, ou sur `/president fin` ou `nouveau`)
 

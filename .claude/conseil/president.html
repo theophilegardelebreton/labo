@@ -69,6 +69,7 @@ a{color:var(--dir)}
 .toprow .card{max-width:340px;flex:1 1 220px}
 .ctrlcard{border-style:dashed;border-top-style:solid}
 .verdict{font-family:var(--mono);font-size:.68rem;font-weight:600;padding:1px 7px;border-radius:999px;color:#fff;white-space:nowrap}
+.verdict.am-proposee{background:var(--dir)} .verdict.am-acceptee,.verdict.am-appliquee{background:var(--ok)} .verdict.am-refusee{background:var(--mem)}
 .verdict.GO{background:var(--ok)} .verdict.NO-GO{background:var(--debat)} .verdict.attente{background:var(--mem)}
 .ctrl{display:flex;flex-direction:column;gap:8px;font-size:.84rem}
 .ctrl div{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:8px}
@@ -294,7 +295,8 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
  "livrables": [],
  "journal": [],
  "synthese": null,
- "controles": []
+ "controles": [],
+ "ameliorations": []
 }
 </script>
 
@@ -682,6 +684,15 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
     if (ct.length) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Contrôles du Head of Common Sense'), h('div', {class:'ctrl'}, ct.slice().reverse().map(function(x){
       return h('div', null, h('span', {class:'verdict ' + (x.verdict || 'attente')}, x.verdict || 'en cours'), h('span', null, h('strong', null, x.livrable + (x.tour ? ' · tour ' + x.tour : '')), h('br'), h('span', {class:'muted'}, 'responsable : ' + nom(x.responsable)), x.defauts ? [h('br'), x.defauts] : null));
     }))));
+    var am = arr(data.ameliorations);
+    if (am.length) {
+      var TY = {equipe:'Équipe', role:'Rôle', methode:'Méthode', tableau:'Tableau', outil:'Outil'};
+      var ST = {proposee:'proposée', acceptee:'acceptée', refusee:'refusée', appliquee:'appliquée'};
+      blocks.push(h('section', {class:'panel'}, h('h2', null, 'Améliorations du conseil'), h('div', {class:'ctrl'}, am.map(function(x){
+        return h('div', null, h('span', {class:'verdict am-' + (x.statut || 'proposee')}, ST[x.statut] || x.statut || 'proposée'),
+          h('span', null, h('strong', null, (TY[x.type] ? TY[x.type] + ' · ' : '') + x.quoi), x.pourquoi ? [h('br'), h('span', {class:'muted'}, x.pourquoi)] : null));
+      }))));
+    }
     if (s) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Synthèse du Président'), h('div', {class:'synth'},
       [['Recommandation', s.recommandation], ['Accords', s.accords], ['Désaccords', s.desaccords], ['Risques', s.risques], ['Prochaine action', s.action]]
         .filter(function(x){ return x[1]; }).map(function(x){ return h('p', null, h('b', null, x[0]), x[1]); }))));
