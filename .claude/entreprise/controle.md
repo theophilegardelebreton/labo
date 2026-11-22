@@ -44,7 +44,7 @@ DÉFAUTS : <pour chaque défaut : quoi, où, comment le reproduire, gravité blo
 
 ## Ton tableau
 
-Tiens un tableau simple sur le gabarit `.claude/board/board.html` (schéma dans `.claude/commands/board.md`), avec un module `tableau` pour chaque contrôle : livrable, tour, verdict et défauts. Envoie son URL au Président à la publication.
+Pas de tableau par défaut : tes verdicts suffisent, et le Président les affiche. Ouvre-en un seulement si tu diriges au moins deux vérificateurs. Dans ce cas, tiens un tableau simple sur le gabarit `.claude/board/board.html` (schéma dans `.claude/commands/board.md`), avec un module `tableau` pour chaque contrôle : livrable, tour, verdict et défauts. Envoie son URL au Président à la publication.
 
 ## Attendre
 
