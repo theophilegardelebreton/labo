@@ -1,6 +1,6 @@
 ---
 description: Ouvre la présidence de l'entreprise d'agents de Théophile. Le Président compose un comité exécutif sur mesure, chaque directeur tourne dans sa propre session enfant avec son équipe et son tableau, les directeurs se parlent directement entre sessions, le Directeur des opérations invente la méthode propre à chaque problème, et le tableau du Président réunit tout. Très coûteux en tokens.
-argument-hint: "[problème] | nouveau [problème] | fin"
+argument-hint: "[problème] | equipe | nouveau [problème] | fin"
 ---
 
 # /president : la présidence
@@ -26,6 +26,7 @@ Le protocole des directeurs est dans `.claude/entreprise/directeur.md`. Chaque s
 Chaque session enfant est indépendante : un `/clear` sur ta session ne vide pas les directeurs. L'identité de l'équipe vit donc dans les fiches, et le projet vit dans les sessions.
 
 - **Au démarrage** de `/president` avec un problème, appelle `list_sessions` avec `children: true`. Si des directeurs d'un projet précédent sont encore actifs et que tu ne mènes pas ce projet dans la conversation en cours (après un `/clear`, par exemple), archive-les avec `archive_session`, ce qui est réversible. Compose ensuite une équipe neuve à partir des fiches : elle a la même identité et ne garde aucun souvenir de l'ancien projet.
+- **Équipe en veille.** `/president equipe` crée les sept directeurs fondateurs sans `prompt` : ce sont des sessions vides, visibles sous la tienne dans la barre latérale, qui ne consomment rien tant qu'elles n'ont pas de mission. Au problème suivant, réutilise ces sessions vides au lieu d'en créer : envoie à chacune, avec `send_message`, le texte du `prompt` de « Créer un directeur ». Archive celles que la partition n'utilise pas. Une session qui a déjà servi à un projet n'est jamais réutilisée pour un autre.
 - `/president nouveau <problème>` clôture le projet en cours (étape « Clôture » ci-dessous), archive l'équipe et démarre le nouveau problème.
 - Recommande à Théophile une session Président par projet : c'est le plus propre, et il retrouve chaque projet dans sa propre session. `/clear` puis `/president` fonctionne aussi.
 - La seule mémoire partagée entre les projets est `.claude/board/memoire/retex.md` (des leçons de méthode, jamais de contenu de projet), plus l'annuaire.
