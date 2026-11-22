@@ -3,8 +3,8 @@
 Le Président, les conseillers et le Recruteur piochent ici pour composer une équipe en quelques secondes, quel que soit le problème. Il y a trois sources, à combiner librement.
 
 1. **Les fiches maison** (`annuaire/`), recrutées comme sous-agents (`general-purpose`) avec le contenu de la fiche en tête du prompt.
-2. **Les 72 agents ECC** (`.claude/agents/`), appelés par `subagent_type`. Ils sont surtout orientés logiciel.
-3. **Les rôles sur mesure** : un sous-agent `general-purpose` avec un nom de métier, un regard en une ligne et, si besoin, les **skills** du dépôt à charger (`.claude/skills/`, 328 au total). C'est la source principale hors logiciel : styliste, ingénieur textile, juriste, architecte, nutritionniste, acheteur, monteur vidéo… Tout métier peut être créé.
+2. **Les 40 agents ECC actifs** (`.claude/agents/`), appelés par `subagent_type`. Ils sont surtout orientés logiciel. 32 agents hors sujet (langages inutilisés, réseau, santé, HarmonyOS) sont rangés dans `.claude/agents-off/` ; on en réactive un en le remettant dans `.claude/agents/`.
+3. **Les rôles sur mesure** : un sous-agent `general-purpose` avec un nom de métier, un regard en une ligne et, si besoin, les **skills** du dépôt à charger (`.claude/skills/`, 211 actifs, les autres rangés dans `.claude/skills-off/`). C'est la source principale hors logiciel : styliste, ingénieur textile, juriste, architecte, nutritionniste, acheteur, monteur vidéo… Tout métier peut être créé.
 
 Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichier pour vérifier qu'il convient.
 
@@ -26,15 +26,13 @@ Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichie
 | Développement et tests | `tdd-guide`, `gan-generator`, `gan-evaluator`, `e2e-runner`, `pr-test-analyzer`, `performance-optimizer`, `refactor-cleaner`, `code-simplifier` |
 | Revue et qualité | `code-reviewer`, `silent-failure-hunter`, `type-design-analyzer`, `comment-analyzer`, `commit-reviewer`, `agent-evaluator` |
 | Sécurité | `security-reviewer`, `opensource-sanitizer` |
-| Revue par langage | `python-reviewer`, `typescript-reviewer`, `react-reviewer`, `vue-reviewer`, `go-reviewer`, `rust-reviewer`, `cpp-reviewer`, `java-reviewer`, `kotlin-reviewer`, `swift-reviewer`, `csharp-reviewer`, `fsharp-reviewer`, `php-reviewer`, `ruby-reviewer`, `django-reviewer`, `fastapi-reviewer`, `flutter-reviewer`, `gdscript-reviewer`, `bengali-reviewer` |
-| Réparation de build | `build-error-resolver`, `cpp-build-resolver`, `rust-build-resolver`, `go-build-resolver`, `java-build-resolver`, `kotlin-build-resolver`, `swift-build-resolver`, `dart-build-resolver`, `react-build-resolver`, `django-build-resolver`, `pytorch-build-resolver` |
-| Données, IA et ML | `database-reviewer`, `mle-reviewer`, `rag-pipeline-reviewer` |
-| Réseau et infrastructure | `network-architect`, `network-config-reviewer`, `network-troubleshooter`, `homelab-architect` |
+| Revue par langage | `python-reviewer`, `typescript-reviewer`, `react-reviewer` |
+| Réparation de build | `build-error-resolver`, `react-build-resolver` |
+| Données, IA et ML | `database-reviewer`, `rag-pipeline-reviewer` |
 | Documentation | `doc-updater`, `docs-lookup` |
 | Marketing et web | `marketing-agent`, `seo-specialist`, `a11y-architect` |
 | Open source | `opensource-forker`, `opensource-packager` |
 | Organisation et agents | `chief-of-staff`, `loop-operator`, `harness-optimizer`, `conversation-analyzer` |
-| Plateformes particulières | `harmonyos-app-resolver`, `healthcare-reviewer` |
 
 ## Skills utiles hors logiciel
 
