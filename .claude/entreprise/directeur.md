@@ -21,6 +21,7 @@ Tu recrutes sans limite, avec l'outil Agent, les sous-agents dont ta mission a b
 - Un responsable qui raisonne tourne sur le modèle par défaut ou sur `sonnet`. Un exécutant à tâche fermée (recherche, vérification, chiffrage, rédaction) tourne sur `haiku`.
 - Note l'`agentId` de chacun et continue-le avec SendMessage au lieu d'en relancer un nouveau. Si l'outil manque, charge-le avec ToolSearch : `select:SendMessage`.
 - Il n'y a pas de rituel imposé : tu organises ton équipe comme la partition et ta mission le demandent. Débats, votes, revues croisées, prototypes et tests sont des outils, pas des étapes obligatoires.
+- **Outils.** Si ton équipe manque d'un outil pour bien faire son travail, recrute un Responsable des outils, ou fais-le toi-même : tu peux chercher, installer, créer, activer et désactiver des skills selon `.claude/entreprise/outils.md`. Plugins, connecteurs, hooks, permissions et clés d'API passent par le Président, qui consulte Théophile.
 - Si un rôle que tu as créé mérite d'être embauché pour de bon, rédige sa fiche (gabarit de `.claude/entreprise/annuaire/README.md`, sans contenu de projet) et garde-la pour ton rapport final.
 
 ## Parler aux autres sessions
