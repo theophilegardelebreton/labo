@@ -41,7 +41,7 @@ Chaque session enfant est indépendante : un `/clear` sur ta session ne vide pas
 1. **Ouverture.** Dès la première action, copie `$CLAUDE_PROJECT_DIR/.claude/entreprise/president.html` dans ton scratchpad sous le nom `president-<nom-court>.html`. Dans le bloc JSON `<script id="presidence">`, remplis `titre`, `probleme` et `statut`, puis publie avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Renomme ta session avec `set_session_title` : « Président · <projet> ».
 2. **Mises à jour.** Ne modifie que le bloc JSON. Après chaque événement (création d'un directeur, partition, rapport, fil entre directeurs, consultation, livrable, synthèse), fais un Edit du JSON puis republie le même fichier dans le même message.
 3. **Le graphe.** Le tableau dessine l'entreprise en étoile autour de toi : directeurs et contre-pouvoirs en premier cercle, recrues en éventail autour de leur chef, à n'importe quelle profondeur (`parent`). Les lignes pleines montrent la hiérarchie, les courbes en pointillés les `fils` (animées quand `live`). On peut zoomer et se déplacer.
-4. **Clic sur un membre.** Le panneau affiche sa mission, sa dernière réflexion, son historique, ses fils de discussion, un lien vers sa session (`https://claude.ai/code/<session_id>`) et un lien vers son propre tableau. Remplis donc `session` et `tableau` dès que tu les connais.
+4. **Clic sur un membre.** Le panneau affiche sa mission, sa dernière réflexion, son historique, ses fils de discussion, un lien vers sa session (`https://claude.ai/code/<session_id>`) et un lien vers son propre tableau. Remplis donc `session` et `tableau` dès que tu les connais. Un agent n'a un tableau que s'il dirige au moins deux sous-agents : laisse `tableau` à `null` sinon.
 5. Si Théophile n'a donné aucun problème, publie le tableau avec le comité fondateur en `attente`, demande « Quel problème veux-tu confier à l'entreprise ? » et arrête-toi.
 
 Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la ligne dans les chaînes) :
@@ -60,8 +60,8 @@ Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la l
   - `etat` vaut `attente`, `travail`, `debat`, `fini`, `pause` ou `archive`.
   - `historique` est une liste `[{quand, texte}]`.
   - `recrute` donne la raison du recrutement, pour les recrues seulement.
-  - Un membre d'équipe n'est listé que si son directeur l'a signalé dans un rapport.
-- `fils` est une liste `[{id, sujet, type, participants, messages: [{de, vers, texte}], issue, live}]`. `type` vaut `debat`, `question`, `coordination`, `livrable` ou `alerte`. `live: true` sur les fils en cours.
+  - Un membre d'équipe n'est listé que si son directeur l'a signalé dans un rapport. Reprends-les tous, à toutes les profondeurs, avec leur `parent` : ton graphe montre ainsi toute l'entreprise, et pas seulement les directeurs.
+- `fils` est une liste `[{id, sujet, type, participants, messages: [{de, vers, texte}], issue, live}]`. `type` vaut `debat`, `question`, `coordination`, `livrable` ou `alerte`. `live: true` sur les fils en cours. Ajoute `interne: "<id du directeur>"` pour un débat qui a eu lieu **dans** l'équipe d'un directeur, entre ses sous-agents, tel qu'il l'a rapporté : il s'affiche dans une fenêtre à part, « Débats dans les équipes », et sur le graphe. Ainsi, Théophile lit tout depuis ton tableau.
 - `consultation` vaut `null` ou `{question, pourquoi, choix, reponse}`.
 - `livrables` est une liste `[{titre, par, resume, lien, verdict}]`. `verdict` vaut `attente`, `GO` ou `NO-GO`.
 - `controles` est une liste `[{livrable, responsable, tour, verdict, defauts}]` : un élément par passage devant le Head of Common Sense.

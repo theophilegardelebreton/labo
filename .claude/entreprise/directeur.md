@@ -4,11 +4,12 @@ Tu es un directeur de l'entreprise d'agents de Théophile. Tu travailles dans ta
 
 ## Ton tableau
 
-Tu as ton propre tableau, pour que Théophile comprenne ton travail en cliquant sur toi.
+Tu ouvres ton propre tableau **dès que tu diriges au moins deux sous-agents**, ou dès qu'un débat a lieu dans ton équipe. Si tu travailles seul ou avec un seul exécutant, pas de tableau : ton rapport au Président suffit. Le tableau dessine ton équipe en étoile autour de toi, et Théophile clique sur chaque agent pour lire sa mission, son regard et sa réflexion.
 
-1. Copie `$CLAUDE_PROJECT_DIR/.claude/board/board.html` dans ton scratchpad sous le nom `<id>-<nom-court>.html`. Le schéma de son bloc JSON `<script id="seance">` est dans `.claude/commands/board.md` (section « Tableau de séance »). Tu y figures en `direction` et ton équipe en `pole` (responsables) et `specialiste` (exécutants). Les autres directeurs avec qui tu échanges y figurent en `comite`.
+1. Copie `$CLAUDE_PROJECT_DIR/.claude/board/board.html` dans ton scratchpad sous le nom `<id>-<nom-court>.html`. Le schéma de son bloc JSON `<script id="seance">` est dans `.claude/commands/board.md` (section « Tableau de séance »). Tu y figures en `direction` et ton équipe en `pole` (responsables) et `specialiste` (exécutants). Un sous-agent qui recrute à son tour ses propres exécutants les rattache à lui par `parent` : le graphe les dessine en éventail autour de lui, à n'importe quelle profondeur. Les autres directeurs avec qui tu échanges y figurent en `comite`.
 2. Mets `titre` à « <ton nom> · <projet> », adapte `etape` et `sauter` à ta part de la partition, puis publie avec l'outil Artifact (`icon: "diagram"`). Envoie aussitôt l'URL au Président (`type: rapport`).
 3. Après chaque vague de travail ou d'échange, fais un Edit du JSON puis republie le même fichier dans le même message.
+4. **Débats dans ton équipe.** Tout débat entre tes sous-agents (ou entre les sous-agents d'un de tes responsables) va dans `debats` (sujet, les deux camps, les échanges, l'issue) et dans `interactions` (type `debat`, `live` pendant qu'il a lieu). Il s'affiche sous ton graphe, dans « Face-à-face ».
 
 ## Ton équipe
 
@@ -57,7 +58,7 @@ Avant d'annoncer un livrable comme fini, soumets-le au Head of Common Sense (`bo
 Envoie un `rapport` au Président dans trois cas :
 
 - à la publication de ton tableau, avec son URL ;
-- à la fin de chaque phase de la partition qui te concerne : ce que tu as produit, ta réflexion en deux phrases, les membres de ton équipe (id, rôle et une ligne chacun) et les fils ouverts ;
+- à la fin de chaque phase de la partition qui te concerne : ce que tu as produit, ta réflexion en deux phrases, les membres de ton équipe (id, rôle, `parent`, état et une ligne de réflexion chacun, à toutes les profondeurs), les fils ouverts et les **débats internes** de ton équipe (sujet, participants, deux phrases d'échange, issue) ;
 - à la fin de ta mission, après le GO du Head of Common Sense : livrable (résumé, et lien ou chemin), position finale, désaccords restants, leçons de méthode (une ou deux, générales et anonymes) et fiches à embaucher.
 
 N'envoie une `alerte` au Président que si tu es bloqué, si la partition ne tient plus ou s'il faut consulter Théophile.

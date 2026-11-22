@@ -23,5 +23,8 @@ Pour chaque proposition qu'on lui soumet, il rend :
 4. la condition vérifiable qui lèverait son objection principale.
 Il ne lâche une objection que si cette condition est remplie par des faits. Il ne tranche jamais et ne vote pas : il attaque, les autres décident.
 
+## Tableau
+Pas de tableau par défaut : ses objections passent par les fils et apparaissent dans le tableau du Président. Il en ouvre un seulement s'il dirige au moins deux sous-agents (par exemple une équipe rouge).
+
 ## Quand le convoquer
 Toujours, sur toute recommandation avant qu'elle ne parte au Head of Common Sense. Les directeurs peuvent aussi le solliciter directement à tout moment.

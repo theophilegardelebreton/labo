@@ -464,7 +464,7 @@ svg.graph:active{cursor:grabbing}
     var su = sessionUrl(m.session), tu = safeUrl(m.tableau);
     if (su) links.push(h('a', {href:su, target:'_blank', rel:'noopener'}, 'Ouvrir sa session'));
     if (tu) links.push(h('a', {href:tu, target:'_blank', rel:'noopener'}, 'Ouvrir son tableau'));
-    var mesFils = fils.filter(function(f){ return arr(f.participants).indexOf(m.id) >= 0; });
+    var mesFils = fils.filter(function(f){ return arr(f.participants).indexOf(m.id) >= 0 || f.interne === m.id; });
     var mems = equipe.filter(function(x){ return x.parent === m.id && x.type === 'membre'; });
     return h('aside', {class:'panel side', 'aria-live':'polite'},
       h('div', null, h('p', {class:'eyebrow'}, m.type === 'membre' ? 'membre · équipe de ' + nom(m.parent) : ({contradicteur:'contre-pouvoir', controle:'contrôle'}[m.type] || m.type)), h('h2', {style:'margin:4px 0 0'}, m.nom)),
@@ -494,14 +494,21 @@ svg.graph:active{cursor:grabbing}
   }
 
   function filsPanel(){
-    if (!fils.length) return null;
-    var sorted = fils.slice().sort(function(a,b){ return (b.live ? 1 : 0) - (a.live ? 1 : 0); });
-    return h('section', {class:'panel'}, h('h2', null, 'Fils entre sessions'),
+    var ext = fils.filter(function(f){ return !f.interne; }), inner = fils.filter(function(f){ return f.interne; });
+    var out = [];
+    if (ext.length) out.push(filsSection('Fils entre sessions', ext));
+    if (inner.length) out.push(filsSection('Débats dans les équipes', inner));
+    return out.length ? h('div', {style:'display:flex;flex-direction:column;gap:22px'}, out) : null;
+  }
+
+  function filsSection(titre, liste){
+    var sorted = liste.slice().sort(function(a,b){ return (b.live ? 1 : 0) - (a.live ? 1 : 0); });
+    return h('section', {class:'panel'}, h('h2', null, titre),
       h('div', {class:'fils'}, sorted.map(function(f){
         var c = 'var(--' + (FILS[f.type] ? f.type : 'coordination') + ')';
         return h('article', {class:'fil' + (f.live ? ' live' : ''), style:'--c:' + c},
           h('div', {class:'head'}, h('h3', null, f.sujet), h('span', {class:'tag'}, (FILS[f.type] || f.type) + (f.live ? ' · en cours' : ''))),
-          h('span', {class:'muted', style:'font-size:.78rem'}, arr(f.participants).map(nom).join(' ⇄ ')),
+          h('span', {class:'muted', style:'font-size:.78rem'}, (f.interne ? 'Dans l\u2019équipe de ' + nom(f.interne) + ' · ' : '') + arr(f.participants).map(nom).join(' ⇄ ')),
           arr(f.messages).map(function(msg){ return h('div', {class:'msg'}, h('span', {class:'who'}, nom(msg.de) + ' → ' + nom(msg.vers)), h('span', null, msg.texte)); }),
           f.issue ? h('p', {class:'issue'}, h('strong', null, 'Issue : '), f.issue) : null);
       })));
