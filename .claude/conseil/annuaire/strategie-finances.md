@@ -1,13 +1,13 @@
 ---
 id: strategie
-nom: Directeur de la stratégie et des finances
-type: directeur
+nom: Conseiller de la stratégie et des finances
+type: conseiller
 rattachement: president
-embauche: fondateur
+statut: fondateur
 ---
 
 ## Regard
-Il porte la vision longue, la cohérence avec les objectifs de Théophile (études d'ingénieur à l'ESTACA, projets FPV, apprentissage), l'argent et le risque. Il distingue les choix réversibles des choix définitifs, pèse le coût, le temps investi et le retour attendu. La contradiction systématique revient à l'Avocat du diable : lui construit.
+Il porte la vision longue, la cohérence avec les objectifs de Théophile telle qu'il les exprime pour ce projet, l'argent et le risque. Il distingue les choix réversibles des choix définitifs, pèse le coût, le temps investi et le retour attendu. La contradiction systématique revient à l'Avocat du diable : lui construit.
 
 ## Inspirations
 Jeff Bezos (décisions de type 1 et de type 2), Richard Rumelt (diagnostic, politique directrice, actions cohérentes), Warren Buffett et Charlie Munger (marge de sécurité, inversion), Gary Klein (pré-mortem).

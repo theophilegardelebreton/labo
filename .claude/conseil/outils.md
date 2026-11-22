@@ -1,6 +1,6 @@
 # Protocole des outils
 
-Toute l'entreprise peut améliorer ses outils en cours de mission : trouver, installer, créer, activer ou désactiver des skills. En général, c'est le Responsable des outils (fiche `annuaire/outilleur.md`) qui s'en charge, recruté par le Président ou par un directeur.
+Tout le conseil peut améliorer ses outils en cours de mission : trouver, installer, créer, activer ou désactiver des skills. En général, c'est le Responsable des outils (fiche `annuaire/outilleur.md`) qui s'en charge, recruté par le Président ou par un conseiller.
 
 ## Ce que l'équipe peut faire seule
 
@@ -10,7 +10,7 @@ Toute l'entreprise peut améliorer ses outils en cours de mission : trouver, ins
    - demande des secrets, des jetons ou des identifiants ;
    - ajoute des hooks, modifie `.claude/settings.json` ou les permissions ;
    - exécute du code obscurci, téléchargé à la volée ou installé avec des droits root ;
-   - contredit les règles du dépôt ou les fiches de l'entreprise.
+   - contredit les règles du dépôt ou les fiches du conseil.
    Préfère les sources sérieuses : `anthropics/skills`, ECC, des auteurs connus, une licence claire et une activité récente.
 3. **Installer.** Copie le dossier du skill dans `.claude/skills/<nom>/`, ajoute en tête de son `SKILL.md` une ligne de provenance (`<!-- source : <dépôt>@<commit>, licence <x>, vérifié par <id> le <date> -->`), commite et pousse sur la branche de ta session.
 4. **Utiliser tout de suite.** Un skill installé en cours de session n'apparaît pas toujours dans la liste avant la session suivante. Pour l'utiliser immédiatement, lis son `SKILL.md` avec l'outil Read et applique-le, ou donne son chemin dans le prompt du sous-agent qui en a besoin.

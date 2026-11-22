@@ -1,9 +1,9 @@
 ---
-description: Réunit l'entreprise d'agents de Théophile (direction, comité de direction, pôles, spécialistes) pour trancher une décision ou mener un projet sur plusieurs séances. Tour à l'aveugle, face-à-face, contre-expertise, vote, atelier, avec un tableau en direct à droite, des recrutements sans limite, la consultation de Théophile en cas d'impasse et une mémoire dans le dépôt. Coûteux en tokens.
+description: Réunit le conseil d'agents de Théophile (direction, comité de direction, pôles, spécialistes) pour trancher une décision ou mener un projet sur plusieurs séances. Tour à l'aveugle, face-à-face, contre-expertise, vote, atelier, avec un tableau en direct à droite, des recrutements sans limite, la consultation de Théophile en cas d'impasse et une mémoire dans le dépôt. Coûteux en tokens.
 argument-hint: "[sujet] | flash [sujet] | complet [sujet] | reprendre [projet]"
 ---
 
-# /board : l'entreprise d'agents
+# /board : le conseil d'agents
 
 Demande de Théophile : $ARGUMENTS
 
@@ -18,7 +18,7 @@ Tu es le **Directeur général** (DG). Tu ne votes pas. Tu cadres, composes l'é
 
 ## Tableau de séance (dès la première action)
 
-Le tableau est l'interface de l'entreprise. Théophile doit le voir s'ouvrir à droite dès qu'il tape `/board`, puis le voir évoluer.
+Le tableau est l'interface du conseil. Théophile doit le voir s'ouvrir à droite dès qu'il tape `/board`, puis le voir évoluer.
 
 1. **Ouverture.** Copie `$CLAUDE_PROJECT_DIR/.claude/board/board.html` dans ton scratchpad, sous le nom `board-<nom-court>.html`. Le gabarit contient déjà l'équipe prête : le DG, le comité de direction en attente et le vivier des pôles types. Dans le bloc JSON `<script id="seance">`, mets à jour `titre`, `question`, `statut` et `projet` s'il y en a un, et adapte le `vivier` au sujet. Publie aussitôt avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Pour un projet repris, réutilise l'URL notée dans le fichier projet (`url` dans l'appel Artifact) afin que Théophile retrouve le même tableau.
 2. **Mises à jour.** Ne modifie que le bloc JSON, jamais le HTML, le CSS ni le script. Après chaque vague (composition, envoi d'un tour, retours d'un tour, chaque recrutement, chaque face-à-face, contre-expertise, vote, consultation, atelier, synthèse), fais un Edit du JSON puis republie **le même fichier** dans le même message. Republie *avant* de lancer une vague, avec les agents concernés en `etat: "reflexion"`, puis *après* avec leurs mini-raisonnements.
@@ -112,7 +112,7 @@ Réduis le sujet à une question tranchable ou à un livrable précis : options,
 Lance le comité et les responsables de pôle **en parallèle**, dans un seul message (Agent, `subagent_type: general-purpose`, `run_in_background: false`). **Note l'`agentId` de chacun** : tu le réutiliseras pour tous les tours suivants.
 
 ```text
-Tu fais partie de l'entreprise d'agents de Théophile, au poste de <RÔLE> (<niveau>) : <regard>.
+Tu fais partie du conseil d'agents de Théophile, au poste de <RÔLE> (<niveau>) : <regard>.
 Reste strictement dans ce rôle, sans chercher l'équilibre ni le consensus. On te recontactera pour des débats : garde ta position en mémoire.
 
 <DOSSIER>
@@ -134,7 +134,7 @@ Tu peux autoriser des recherches web à un rôle qui en a besoin : précise-le, 
 Le conseil n'a pas de taille maximale. Recrute dès qu'un de ces signaux apparaît : un BESOIN exprimé par un responsable, une EXPERTISE MANQUANTE qui peut changer la décision, un désaccord que personne ne sait trancher, un fait clé non vérifié (prix, loi, norme, compatibilité, disponibilité), un sujet plus large que prévu.
 
 - **Spécialiste** : un agent sur le modèle `haiku`, avec une tâche fermée et un livrable court, rattaché au pôle demandeur (`parent`). Son résultat est transmis à ce pôle.
-- **Nouveau pôle** : un responsable sur modèle fort. Il reçoit le dossier et tout ce qui a été dit, avec la consigne « Tu rejoins l'entreprise en cours de séance : appuie-toi sur ce qui a été dit et comble ce qui manque. » Il répond au gabarit du tour 1, puis il débat et vote.
+- **Nouveau pôle** : un responsable sur modèle fort. Il reçoit le dossier et tout ce qui a été dit, avec la consigne « Tu rejoins le conseil en cours de séance : appuie-toi sur ce qui a été dit et comble ce qui manque. » Il répond au gabarit du tour 1, puis il débat et vote.
 
 Ne recrute pas pour la forme : chaque recrue comble un manque que tu nommes. Lance les recrues d'une même vague en parallèle. Annonce chaque recrutement à Théophile en une phrase et ajoute-le au tableau (`recrute`, `interactions` de type `delegation`, `journal`, `vivier`).
 
