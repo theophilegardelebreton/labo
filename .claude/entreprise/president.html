@@ -1,0 +1,306 @@
+<title>Présidence</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Gabarit du tableau /president. Le Président ne modifie QUE le bloc JSON #presidence en bas de page (schéma dans .claude/commands/president.md). */
+:root{
+  --bg:#f7f7f6; --surface:#ffffff; --fg:#111111; --muted:#6b6b6b; --line:#e5e5e3; --soft:#f0f0ee;
+  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c;
+  --debat:#e03131; --question:#2f5bd3; --coordination:#9a9a9a; --livrable:#2f9e44; --alerte:#e67700;
+  --ok:#2f9e44; --warn:#e67700;
+  --display:"Inter Tight",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595;
+  --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
+  --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595;
+  --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
+  --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.55;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:1.85rem;font-weight:800;letter-spacing:-.01em} h2{font-size:1.05rem;font-weight:700;margin-bottom:12px} h3{font-size:.92rem;font-weight:700}
+p{margin:0}
+a{color:var(--dir)}
+.eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)} .empty{color:var(--muted);font-style:italic;font-size:.88rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--mono);font-size:.72rem;padding:3px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.top{display:flex;flex-direction:column;gap:10px}
+.q{font-size:1rem;max-width:80ch}
+/* Consultation */
+.consult{border:2px solid var(--theo);background:var(--surface);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.consult.done{border-width:1px;border-color:var(--line)}
+.choice{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.86rem;background:var(--soft)}
+/* Partition */
+.phases{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.phase{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;font-size:.84rem}
+.phase.encours{border:2px solid var(--theo)} .phase.prevue{border-style:dashed;color:var(--muted)} .phase.faite{background:var(--soft)}
+.phase .meta{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+/* Organigramme */
+.main{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:1fr}}
+.org{display:flex;flex-direction:column;align-items:center;gap:0}
+.card{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
+.card:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.card.sel{box-shadow:0 0 0 2px var(--fg)}
+.card .nm{font-weight:600;font-size:.9rem;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.card .rf{font-size:.8rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.prescard{max-width:340px}
+.stem{width:2px;height:18px;background:var(--line)}
+.dirs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;width:100%;border-top:2px solid var(--line);padding-top:18px}
+.dircol{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mems{display:flex;flex-direction:column;gap:4px;padding-left:12px;border-left:2px solid var(--line);margin-left:10px}
+.mem{font:inherit;color:inherit;text-align:left;background:var(--soft);border:1px solid transparent;border-radius:6px;padding:4px 8px;font-size:.78rem;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
+.mem.sel{border-color:var(--fg)}
+.mem:focus-visible{outline:2px solid var(--fg)}
+.state{font-family:var(--mono);font-size:.64rem;padding:1px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap;font-weight:500}
+.state.travail,.state.debat{border-color:var(--theo);color:var(--theo)}
+.state.fini{border-color:var(--ok);color:var(--ok)}
+.state.archive{opacity:.5}
+@keyframes blink{50%{opacity:.35}}
+.state.travail,.state.debat{animation:blink 1.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.state{animation:none!important}}
+.talk{font-family:var(--mono);font-size:.66rem;color:var(--debat)}
+/* Détail */
+.side{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.82rem;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.think{background:var(--soft);border-radius:8px;padding:12px;font-size:.88rem;border-left:3px solid var(--fg)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{font-size:.8rem;border:1px solid var(--line);border-radius:6px;padding:4px 10px;text-decoration:none;background:var(--soft)}
+.hist{display:flex;flex-direction:column;gap:6px;font-size:.8rem}
+.hist div{display:grid;grid-template-columns:auto 1fr;gap:8px}
+.hist .when{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+/* Fils */
+.fils{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:12px}
+.fil{border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.fil.live{box-shadow:0 0 0 1px var(--c)}
+.fil .head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:4px;color:#fff;background:var(--c);white-space:nowrap}
+.msg{font-size:.82rem;display:flex;flex-direction:column;gap:1px}
+.msg .who{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.issue{font-size:.82rem;border-top:1px solid var(--line);padding-top:6px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px}
+.livr{display:flex;flex-direction:column;gap:10px}
+.livr div{display:flex;flex-direction:column;gap:2px;font-size:.86rem}
+.synth{display:flex;flex-direction:column;gap:10px;font-size:.9rem}
+.synth b{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block}
+.journal{display:flex;flex-direction:column;gap:4px;font-size:.8rem;max-height:320px;overflow:auto}
+.journal div{display:grid;grid-template-columns:3.2em 7em 1fr;gap:8px}
+.journal .t{font-family:var(--mono);color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.75rem;color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:50%;display:inline-block}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script id="presidence" type="application/json">
+{
+  "titre": "Entreprise prête",
+  "probleme": "En attente du problème de Théophile.",
+  "statut": "Le comité fondateur attend sa première mission.",
+  "phase": "cadrage",
+  "partition": [],
+  "equipe": [
+    {"id": "president", "nom": "Président", "type": "president", "parent": null, "session": null, "tableau": null, "etat": "attente", "mission": "Recevoir le problème, composer l'équipe, faire circuler l'information et rendre le résultat.", "reflexion": "J'attends le problème de Théophile.", "historique": [], "recrute": null},
+    {"id": "coo", "nom": "Directeur des opérations", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "Écrire la partition : la méthode propre à ce problème.", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "strategie", "nom": "Directeur de la stratégie", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "cto", "nom": "Directeur technique", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "cfo", "nom": "Directeur financier et des achats", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "produit", "nom": "Directeur produit, marque et contenus", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "recherche", "nom": "Directeur scientifique", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
+    {"id": "risques", "nom": "Directeur des risques", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null}
+  ],
+  "fils": [],
+  "consultation": null,
+  "livrables": [],
+  "journal": [],
+  "synthese": null
+}
+</script>
+
+<script>
+(function(){
+  var data;
+  try { data = JSON.parse(document.getElementById('presidence').textContent); }
+  catch (e) { document.getElementById('app').textContent = 'Bloc JSON invalide : ' + e.message; return; }
+
+  var arr = function(x){ return Array.isArray(x) ? x : []; };
+  var equipe = arr(data.equipe), fils = arr(data.fils);
+  var byId = {}; equipe.forEach(function(m){ byId[m.id] = m; });
+  var nom = function(id){ return byId[id] ? byId[id].nom : id; };
+  var ETATS = {attente:'en attente', travail:'au travail', debat:'en débat', fini:'fini', pause:'en pause', archive:'archivé'};
+  var FILS = {debat:'débat', question:'question', coordination:'coordination', livrable:'livrable', alerte:'alerte'};
+  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', membre:'var(--mem)', theophile:'var(--theo)'};
+  var selected = 'president';
+  try { selected = localStorage.getItem('presidence-sel') || selected; } catch (e) {}
+  if (!byId[selected]) selected = equipe.length ? equipe[0].id : null;
+
+  function h(tag, attrs){
+    var el = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function(k){
+      if (k === 'class') el.className = attrs[k];
+      else if (k === 'style') el.setAttribute('style', attrs[k]);
+      else if (k.slice(0,2) === 'on') el.addEventListener(k.slice(2), attrs[k]);
+      else el.setAttribute(k, attrs[k]);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c == null || c === false) continue;
+      if (Array.isArray(c)) c.forEach(function(x){ if (x != null) el.append(x); });
+      else el.append(c);
+    }
+    return el;
+  }
+  function safeUrl(u){ return (typeof u === 'string' && /^https:\/\//.test(u)) ? u : null; }
+  function sessionUrl(s){ return (typeof s === 'string' && /^session_[A-Za-z0-9]+$/.test(s)) ? 'https://claude.ai/code/' + s : null; }
+  function stateChip(m){ return h('span', {class:'state ' + (m.etat || '')}, ETATS[m.etat] || m.etat || ''); }
+  function liveWith(id){
+    return fils.filter(function(f){ return f.live && arr(f.participants).indexOf(id) >= 0; })
+      .map(function(f){ return arr(f.participants).filter(function(p){ return p !== id; }).map(nom).join(', '); })
+      .filter(Boolean);
+  }
+  function select(id){ selected = id; try { localStorage.setItem('presidence-sel', id); } catch (e) {} render(); }
+
+  function card(m, extra){
+    var talks = liveWith(m.id);
+    return h('button', {class:'card ' + (extra || '') + (selected === m.id ? ' sel' : ''), style:'--c:' + (COLOR[m.type] || 'var(--mem)'), type:'button', onclick:function(){ select(m.id); }, 'aria-pressed': selected === m.id ? 'true' : 'false'},
+      h('span', {class:'nm'}, h('span', null, m.nom), stateChip(m)),
+      m.reflexion ? h('span', {class:'rf'}, m.reflexion) : (m.mission ? h('span', {class:'rf'}, m.mission) : null),
+      talks.length ? h('span', {class:'talk'}, 'échange avec ' + talks.join(', ')) : null);
+  }
+
+  function organigramme(){
+    var pres = equipe.filter(function(m){ return m.type === 'president'; })[0];
+    var theo = equipe.filter(function(m){ return m.type === 'theophile'; });
+    var dirs = equipe.filter(function(m){ return m.type === 'directeur'; });
+    var org = h('div', {class:'org'});
+    if (pres) org.append(card(pres, 'prescard'));
+    theo.forEach(function(t){ org.append(h('div', {class:'stem'}), card(t, 'prescard')); });
+    if (dirs.length) {
+      org.append(h('div', {class:'stem'}));
+      org.append(h('div', {class:'dirs'}, dirs.map(function(d){
+        var mems = equipe.filter(function(m){ return m.type === 'membre' && m.parent === d.id; });
+        return h('div', {class:'dircol'}, card(d),
+          mems.length ? h('div', {class:'mems'}, mems.map(function(m){
+            return h('button', {class:'mem' + (selected === m.id ? ' sel' : ''), type:'button', onclick:function(){ select(m.id); }}, h('span', null, m.nom), stateChip(m));
+          })) : null);
+      })));
+    }
+    return h('section', {class:'panel'}, h('h2', null, 'Organigramme'), org,
+      h('div', {class:'legend'},
+        h('span', null, h('i', {class:'sw', style:'background:var(--pres)'}), 'Président'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'Directeur (session enfant)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'Membre d’équipe (sous-agent)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--theo)'}), 'Théophile')));
+  }
+
+  function detail(){
+    var m = byId[selected];
+    if (!m) return h('aside', {class:'panel side'}, h('p', {class:'empty'}, 'Clique sur un membre.'));
+    var links = [];
+    var su = sessionUrl(m.session), tu = safeUrl(m.tableau);
+    if (su) links.push(h('a', {href:su, target:'_blank', rel:'noopener'}, 'Ouvrir sa session'));
+    if (tu) links.push(h('a', {href:tu, target:'_blank', rel:'noopener'}, 'Ouvrir son tableau'));
+    var mesFils = fils.filter(function(f){ return arr(f.participants).indexOf(m.id) >= 0; });
+    var mems = equipe.filter(function(x){ return x.parent === m.id && x.type === 'membre'; });
+    return h('aside', {class:'panel side', 'aria-live':'polite'},
+      h('div', null, h('p', {class:'eyebrow'}, m.type === 'membre' ? 'membre · équipe de ' + nom(m.parent) : m.type), h('h2', {style:'margin:4px 0 0'}, m.nom)),
+      h('dl', {class:'kv'}, h('dt', null, 'État'), h('dd', null, stateChip(m)),
+        m.mission ? [h('dt', null, 'Mission'), h('dd', null, m.mission)] : null,
+        m.recrute ? [h('dt', null, 'Recruté'), h('dd', null, m.recrute)] : null,
+        m.session ? [h('dt', null, 'Session'), h('dd', {style:'font-family:var(--mono);font-size:.72rem'}, m.session)] : null),
+      m.reflexion ? h('div', {class:'think'}, m.reflexion) : h('p', {class:'empty'}, 'Pas encore de réflexion.'),
+      links.length ? h('div', {class:'links'}, links) : null,
+      mems.length ? h('div', null, h('h3', {style:'margin-bottom:6px'}, 'Son équipe'), h('div', {class:'hist'}, mems.map(function(x){ return h('div', null, h('span', {class:'when'}, ETATS[x.etat] || ''), h('span', null, x.nom + (x.reflexion ? ' : ' + x.reflexion : ''))); }))) : null,
+      mesFils.length ? h('div', null, h('h3', {style:'margin-bottom:6px'}, 'Ses fils'), h('div', {class:'hist'}, mesFils.map(function(f){ return h('div', null, h('span', {class:'when'}, FILS[f.type] || f.type), h('span', null, f.sujet + (f.issue ? ' → ' + f.issue : ''))); }))) : null,
+      arr(m.historique).length ? h('div', null, h('h3', {style:'margin-bottom:6px'}, 'Historique'), h('div', {class:'hist'}, arr(m.historique).slice().reverse().map(function(x){ return h('div', null, h('span', {class:'when'}, x.quand || ''), h('span', null, x.texte)); }))) : null);
+  }
+
+  function partition(){
+    var p = arr(data.partition);
+    if (!p.length) return null;
+    return h('section', {class:'panel'}, h('h2', null, 'Partition du Directeur des opérations'),
+      h('div', {class:'phases'}, p.map(function(x){
+        var cls = x.etat === 'en cours' ? 'encours' : (x.etat || '');
+        return h('div', {class:'phase ' + cls},
+          h('span', {class:'meta'}, 'Phase ' + x.n + ' · ' + (x.mode || '') + (x.cout ? ' · ' + x.cout : '')),
+          h('strong', null, x.nom),
+          arr(x.qui).length ? h('span', {class:'muted'}, arr(x.qui).map(nom).join(', ')) : null,
+          x.livrable ? h('span', null, x.livrable) : null);
+      })));
+  }
+
+  function filsPanel(){
+    if (!fils.length) return null;
+    var sorted = fils.slice().sort(function(a,b){ return (b.live ? 1 : 0) - (a.live ? 1 : 0); });
+    return h('section', {class:'panel'}, h('h2', null, 'Fils entre sessions'),
+      h('div', {class:'fils'}, sorted.map(function(f){
+        var c = 'var(--' + (FILS[f.type] ? f.type : 'coordination') + ')';
+        return h('article', {class:'fil' + (f.live ? ' live' : ''), style:'--c:' + c},
+          h('div', {class:'head'}, h('h3', null, f.sujet), h('span', {class:'tag'}, (FILS[f.type] || f.type) + (f.live ? ' · en cours' : ''))),
+          h('span', {class:'muted', style:'font-size:.78rem'}, arr(f.participants).map(nom).join(' ⇄ ')),
+          arr(f.messages).map(function(msg){ return h('div', {class:'msg'}, h('span', {class:'who'}, nom(msg.de) + ' → ' + nom(msg.vers)), h('span', null, msg.texte)); }),
+          f.issue ? h('p', {class:'issue'}, h('strong', null, 'Issue : '), f.issue) : null);
+      })));
+  }
+
+  function consultation(){
+    var c = data.consultation;
+    if (!c) return null;
+    return h('section', {class:'consult' + (c.reponse ? ' done' : '')},
+      h('p', {class:'eyebrow', style:'color:var(--theo)'}, c.reponse ? 'Théophile a répondu' : 'Le Président consulte Théophile'),
+      h('h2', {style:'margin:0'}, c.question),
+      c.pourquoi ? h('p', {class:'muted'}, c.pourquoi) : null,
+      h('div', {class:'chips'}, arr(c.choix).map(function(x){ return h('span', {class:'choice'}, x); })),
+      c.reponse ? h('p', null, h('strong', null, 'Réponse : '), c.reponse) : null);
+  }
+
+  function bas(){
+    var l = arr(data.livrables), s = data.synthese, j = arr(data.journal);
+    var blocks = [];
+    if (l.length) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Livrables'), h('div', {class:'livr'}, l.map(function(x){
+      var u = safeUrl(x.lien);
+      return h('div', null, h('strong', null, u ? h('a', {href:u, target:'_blank', rel:'noopener'}, x.titre) : x.titre), h('span', {class:'muted', style:'font-size:.78rem'}, 'par ' + nom(x.par) + (!u && x.lien ? ' · ' + x.lien : '')), x.resume ? h('span', null, x.resume) : null);
+    }))));
+    if (s) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Synthèse du Président'), h('div', {class:'synth'},
+      [['Recommandation', s.recommandation], ['Accords', s.accords], ['Désaccords', s.desaccords], ['Risques', s.risques], ['Prochaine action', s.action]]
+        .filter(function(x){ return x[1]; }).map(function(x){ return h('p', null, h('b', null, x[0]), x[1]); }))));
+    if (j.length) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Journal'), h('div', {class:'journal'}, j.slice().reverse().map(function(x){ return h('div', null, h('span', {class:'t'}, x.t), h('strong', {style:'font-size:.76rem'}, nom(x.qui)), h('span', null, x.texte)); }))));
+    return blocks.length ? h('div', {class:'grid2'}, blocks) : null;
+  }
+
+  function render(){
+    var app = document.getElementById('app');
+    var nDir = equipe.filter(function(m){ return m.type === 'directeur' && m.session; }).length;
+    var nLive = fils.filter(function(f){ return f.live; }).length;
+    var parts = [
+      h('header', {class:'top'},
+        h('p', {class:'eyebrow'}, 'Présidence · tableau principal'),
+        h('h1', null, data.titre || 'Présidence'),
+        data.probleme ? h('p', {class:'q'}, data.probleme) : null,
+        h('div', {class:'chips'},
+          data.statut ? h('span', {class:'chip'}, data.statut) : null,
+          data.phase ? h('span', {class:'chip'}, 'phase : ' + data.phase) : null,
+          h('span', {class:'chip'}, nDir + ' session' + (nDir > 1 ? 's' : '') + ' directeur'),
+          nLive ? h('span', {class:'chip', style:'border-color:var(--debat);color:var(--debat)'}, nLive + ' fil' + (nLive > 1 ? 's' : '') + ' en cours') : null)),
+      consultation(),
+      partition(),
+      h('div', {class:'main'}, organigramme(), detail()),
+      filsPanel(),
+      bas()];
+    app.replaceChildren.apply(app, parts.filter(Boolean));
+  }
+  render();
+})();
+</script>
