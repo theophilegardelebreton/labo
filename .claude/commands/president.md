@@ -40,8 +40,9 @@ Chaque session enfant est indépendante : un `/clear` sur ta session ne vide pas
 
 1. **Ouverture.** Dès la première action, copie `$CLAUDE_PROJECT_DIR/.claude/entreprise/president.html` dans ton scratchpad sous le nom `president-<nom-court>.html`. Dans le bloc JSON `<script id="presidence">`, remplis `titre`, `probleme` et `statut`, puis publie avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Renomme ta session avec `set_session_title` : « Président · <projet> ».
 2. **Mises à jour.** Ne modifie que le bloc JSON. Après chaque événement (création d'un directeur, partition, rapport, fil entre directeurs, consultation, livrable, synthèse), fais un Edit du JSON puis republie le même fichier dans le même message.
-3. **Clic sur un membre.** Le panneau affiche sa mission, sa dernière réflexion, son historique, ses fils de discussion, un lien vers sa session (`https://claude.ai/code/<session_id>`) et un lien vers son propre tableau. Remplis donc `session` et `tableau` dès que tu les connais.
-4. Si Théophile n'a donné aucun problème, publie le tableau avec le comité fondateur en `attente`, demande « Quel problème veux-tu confier à l'entreprise ? » et arrête-toi.
+3. **Le graphe.** Le tableau dessine l'entreprise en étoile autour de toi : directeurs et contre-pouvoirs en premier cercle, recrues en éventail autour de leur chef, à n'importe quelle profondeur (`parent`). Les lignes pleines montrent la hiérarchie, les courbes en pointillés les `fils` (animées quand `live`). On peut zoomer et se déplacer.
+4. **Clic sur un membre.** Le panneau affiche sa mission, sa dernière réflexion, son historique, ses fils de discussion, un lien vers sa session (`https://claude.ai/code/<session_id>`) et un lien vers son propre tableau. Remplis donc `session` et `tableau` dès que tu les connais.
+5. Si Théophile n'a donné aucun problème, publie le tableau avec le comité fondateur en `attente`, demande « Quel problème veux-tu confier à l'entreprise ? » et arrête-toi.
 
 Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la ligne dans les chaînes) :
 
@@ -51,7 +52,8 @@ Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la l
   - `qui` est une liste d'`id`.
   - `cout` vaut `léger`, `moyen` ou `lourd`.
   - `etat` vaut `faite`, `en cours` ou `prevue`.
-- `equipe` est une liste `[{id, nom, type, parent, session, tableau, etat, mission, reflexion, historique, recrute}]`.
+- `equipe` est une liste `[{id, nom, court, type, parent, session, tableau, etat, mission, reflexion, historique, recrute}]`.
+  - `court` est le nom affiché sur le graphe (deux ou trois mots, par exemple « Technique », « Money Maker »).
   - `type` vaut `president`, `directeur`, `contradicteur` (l'Avocat du diable), `controle` (le Head of Common Sense), `membre` ou `theophile`. Les deux contre-pouvoirs sont affichés à côté de toi.
   - `parent` est l'`id` du supérieur : `president` pour un directeur, un contre-pouvoir ou un membre de ta propre équipe, l'`id` du directeur pour un membre.
   - `session` est l'identifiant `session_…` d'un directeur, et `tableau` l'URL de son tableau.

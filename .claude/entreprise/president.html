@@ -5,19 +5,19 @@
 /* Gabarit du tableau /president. Le Président ne modifie QUE le bloc JSON #presidence en bas de page (schéma dans .claude/commands/president.md). */
 :root{
   --bg:#f7f7f6; --surface:#ffffff; --fg:#111111; --muted:#6b6b6b; --line:#e5e5e3; --soft:#f0f0ee;
-  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c; --ctrl:#0b7285; --diable:#c92a2a;
+  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c; --ctrl:#0b7285; --diable:#c92a2a; --ceo:#7a1f24; --canvas:#fbfaf7;
   --debat:#e03131; --question:#2f5bd3; --coordination:#9a9a9a; --livrable:#2f9e44; --alerte:#e67700;
   --ok:#2f9e44; --warn:#e67700;
   --display:"Inter Tight",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b; --ceo:#b8434a; --canvas:#121212;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db; --diable:#ff6b6b; --ceo:#b8434a; --canvas:#121212;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}
 *{box-sizing:border-box}
@@ -46,7 +46,7 @@ a{color:var(--dir)}
 .phase.encours{border:2px solid var(--theo)} .phase.prevue{border-style:dashed;color:var(--muted)} .phase.faite{background:var(--soft)}
 .phase .meta{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
 /* Organigramme */
-.main{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+.main{display:grid;grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:860px){.main{grid-template-columns:1fr}}
 .org{display:flex;flex-direction:column;align-items:center;gap:0}
 .card{font:inherit;color:inherit;text-align:left;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:10px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
@@ -104,6 +104,36 @@ a{color:var(--dir)}
 .journal{display:flex;flex-direction:column;gap:4px;font-size:.8rem;max-height:320px;overflow:auto}
 .journal div{display:grid;grid-template-columns:3.2em 7em 1fr;gap:8px}
 .journal .t{font-family:var(--mono);color:var(--muted)}
+.gpanel{display:flex;flex-direction:column;gap:10px}
+.ghead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.gtools{display:flex;gap:6px}
+.gtools button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--soft);color:var(--fg);border-radius:6px;padding:3px 10px;cursor:pointer;min-width:32px}
+.gtools button:focus-visible{outline:2px solid var(--fg)}
+.gwrap{border:1px solid var(--line);border-radius:10px;background:var(--canvas);overflow:hidden}
+svg.graph{display:block;width:100%;height:auto;aspect-ratio:1000/720;cursor:grab;touch-action:none;user-select:none}
+svg.graph:active{cursor:grabbing}
+.edge{stroke:var(--ceo);stroke-opacity:.45;stroke-width:1.6}
+.edge.deep{stroke-opacity:.3;stroke-width:1.1}
+.edge.on{stroke-opacity:.9;stroke-width:2.2}
+.comm{fill:none;stroke-width:1.6;stroke-dasharray:6 5;opacity:.55}
+.comm.live{opacity:1;stroke-width:2.2;animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-22}}
+.gnode{cursor:pointer;outline:none}
+.gnode .disc{fill:var(--surface);stroke-width:2}
+.gnode.sel .disc{stroke-width:4}
+.gnode:focus-visible .disc{stroke-dasharray:4 3}
+.gnode .letter{font-family:var(--mono);font-size:13px;font-weight:600}
+.gnode .ceo{font-family:var(--display);font-size:17px;font-weight:800;fill:#fff}
+.gnode .lbl{font-family:var(--body);font-size:12px;fill:var(--fg)}
+.gnode .lbl.l1{font-family:var(--display);font-size:13.5px;font-weight:700}
+.gnode.attente .disc{stroke-dasharray:3 3}
+.gnode .disc[style*="--ceo"]{stroke-dasharray:none}
+.gnode.archive{opacity:.4}
+.halo{fill:none;stroke-width:2;opacity:.5;transform-box:fill-box;transform-origin:center;animation:pulse 1.6s ease-out infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.35);opacity:0}}
+@media (prefers-reduced-motion:reduce){.comm.live,.halo{animation:none}}
+.ln{width:18px;height:0;border-top:2px solid var(--ceo);display:inline-block;opacity:.7}
+.ln.dash{border-top-style:dashed;border-color:var(--debat)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.75rem;color:var(--muted);margin-top:12px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -122,6 +152,7 @@ a{color:var(--dir)}
   {
    "id": "president",
    "nom": "Président",
+   "court": "Président",
    "type": "president",
    "parent": null,
    "session": null,
@@ -135,6 +166,7 @@ a{color:var(--dir)}
   {
    "id": "diable",
    "nom": "Avocat du diable",
+   "court": "Avocat du diable",
    "type": "contradicteur",
    "parent": "president",
    "session": null,
@@ -148,6 +180,7 @@ a{color:var(--dir)}
   {
    "id": "bonsens",
    "nom": "Head of Common Sense",
+   "court": "Head of Common Sense",
    "type": "controle",
    "parent": "president",
    "session": null,
@@ -161,6 +194,7 @@ a{color:var(--dir)}
   {
    "id": "coo",
    "nom": "Directeur des opérations",
+   "court": "Opérations",
    "type": "directeur",
    "parent": "president",
    "session": null,
@@ -174,6 +208,7 @@ a{color:var(--dir)}
   {
    "id": "strategie",
    "nom": "Directeur de la stratégie et des finances",
+   "court": "Stratégie et finances",
    "type": "directeur",
    "parent": "president",
    "session": null,
@@ -187,6 +222,7 @@ a{color:var(--dir)}
   {
    "id": "technique",
    "nom": "Directeur technique et scientifique",
+   "court": "Technique",
    "type": "directeur",
    "parent": "president",
    "session": null,
@@ -200,6 +236,7 @@ a{color:var(--dir)}
   {
    "id": "creation",
    "nom": "Directeur de la création et de la communication",
+   "court": "Création",
    "type": "directeur",
    "parent": "president",
    "session": null,
@@ -271,37 +308,153 @@ a{color:var(--dir)}
       talks.length ? h('span', {class:'talk'}, 'échange avec ' + talks.join(', ')) : null);
   }
 
-  function memBtn(m){
-    return h('button', {class:'mem' + (selected === m.id ? ' sel' : ''), type:'button', onclick:function(){ select(m.id); }}, h('span', null, m.nom), stateChip(m));
+  var view = null, dragged = false;
+  var NS = 'http://www.w3.org/2000/svg';
+  function sv(tag, attrs){
+    var el = document.createElementNS(NS, tag);
+    if (attrs) Object.keys(attrs).forEach(function(k){ el.setAttribute(k, attrs[k]); });
+    for (var i = 2; i < arguments.length; i++) { var c = arguments[i]; if (c != null) el.append(c); }
+    return el;
+  }
+  var LETTRE = {president:'', directeur:'D', contradicteur:'!', controle:'✓', membre:'M', theophile:'T'};
+  var GW = 1000, GH = 720;
+
+  function layout(){
+    var pres = equipe.filter(function(m){ return m.type === 'president'; })[0];
+    var pos = {}, kids = {};
+    equipe.forEach(function(m){ if (m.parent && byId[m.parent] && m.id !== m.parent) (kids[m.parent] = kids[m.parent] || []).push(m); });
+    function count(id, seen){ seen = seen || {}; if (seen[id]) return 0; seen[id] = 1; return (kids[id] || []).reduce(function(s, c){ return s + 1 + count(c.id, seen); }, 0); }
+    var rootId = pres ? pres.id : null;
+    var lvl1 = equipe.filter(function(m){ return m.type !== 'president' && (!m.parent || !byId[m.parent] || m.parent === rootId); });
+    var weights = lvl1.map(function(m){ return 1 + 0.3 * Math.min(count(m.id), 10); });
+    var total = weights.reduce(function(a, b){ return a + b; }, 0) || 1;
+    var cx = GW / 2, cy = GH / 2, a0 = -Math.PI / 2, acc = 0;
+    if (pres) pos[pres.id] = {x:cx, y:cy, r:62, depth:0, a:0};
+    var R1 = lvl1.length > 8 ? 260 : 230;
+    lvl1.forEach(function(m, i){
+      var a = a0 + 2 * Math.PI * (acc + weights[i] / 2) / total; acc += weights[i];
+      pos[m.id] = {x:cx + R1 * Math.cos(a), y:cy + R1 * Math.sin(a), r:26, depth:1, a:a};
+      place(m.id, a, 2);
+    });
+    function place(pid, dir, depth){
+      var ch = kids[pid] || []; if (!ch.length || depth > 6) return;
+      var p = pos[pid], rc = depth === 2 ? 170 : 120;
+      var step = Math.max(10, Math.min(26, 240 / ch.length)) * Math.PI / 180;
+      var start = dir - step * (ch.length - 1) / 2;
+      ch.forEach(function(c, k){
+        if (pos[c.id]) return;
+        var a = start + k * step;
+        pos[c.id] = {x:p.x + rc * Math.cos(a), y:p.y + rc * Math.sin(a), r:17, depth:depth, a:a};
+        place(c.id, a, depth + 1);
+      });
+    }
+    return pos;
   }
 
-  function organigramme(){
-    var pres = equipe.filter(function(m){ return m.type === 'president'; })[0];
-    var theo = equipe.filter(function(m){ return m.type === 'theophile'; });
-    var dirs = equipe.filter(function(m){ return m.type === 'directeur'; });
-    var diable = equipe.filter(function(m){ return m.type === 'contradicteur'; });
-    var ctrl = equipe.filter(function(m){ return m.type === 'controle'; });
-    var presMems = equipe.filter(function(m){ return m.type === 'membre' && m.parent === 'president'; });
-    var org = h('div', {class:'org'});
-    if (pres) org.append(h('div', {class:'toprow'}, diable.map(function(c){ return card(c, 'ctrlcard'); }), card(pres), ctrl.map(function(c){ return card(c, 'ctrlcard'); })));
-    if (presMems.length) org.append(h('div', {class:'mems', style:'margin:8px 0 0;border-left:none;padding-left:0;flex-direction:row;flex-wrap:wrap;justify-content:center'}, presMems.map(memBtn)));
-    theo.forEach(function(t){ org.append(h('div', {class:'stem'}), card(t, 'prescard')); });
-    if (dirs.length) {
-      org.append(h('div', {class:'stem'}));
-      org.append(h('div', {class:'dirs'}, dirs.map(function(d){
-        var mems = equipe.filter(function(m){ return m.type === 'membre' && m.parent === d.id; });
-        return h('div', {class:'dircol'}, card(d),
-          mems.length ? h('div', {class:'mems'}, mems.map(memBtn)) : null);
-      })));
+  function fitView(pos){
+    var xs = [], ys = [];
+    Object.keys(pos).forEach(function(k){ xs.push(pos[k].x); ys.push(pos[k].y); });
+    if (!xs.length) return {x:0, y:0, k:1};
+    var minx = Math.min.apply(null, xs) - 170, maxx = Math.max.apply(null, xs) + 170;
+    var miny = Math.min.apply(null, ys) - 150, maxy = Math.max.apply(null, ys) + 150;
+    var k = Math.min(GW / (maxx - minx), GH / (maxy - miny), 1.25);
+    return {k:k, x:GW / 2 - k * (minx + maxx) / 2, y:GH / 2 - k * (miny + maxy) / 2};
+  }
+
+  function wrap(txt, max){
+    var lines = [], cur = '';
+    String(txt).split(' ').forEach(function(w){
+      if (cur && (cur + ' ' + w).length > max) { lines.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w;
+    });
+    if (cur) lines.push(cur);
+    if (lines.length > 2) lines = [lines[0], lines.slice(1).join(' ').slice(0, max - 1) + '…'];
+    return lines;
+  }
+
+  function graph(){
+    var pos = layout();
+    if (!view) view = fitView(pos);
+    var g = sv('g', {transform:'translate(' + view.x + ',' + view.y + ') scale(' + view.k + ')'});
+    var edges = sv('g'), comms = sv('g'), nodes = sv('g');
+    g.append(edges, comms, nodes);
+    equipe.forEach(function(m){
+      var p = pos[m.id], q = pos[m.parent];
+      if (!p || !q) return;
+      var actif = m.etat === 'travail' || m.etat === 'debat';
+      edges.append(sv('line', {x1:q.x, y1:q.y, x2:p.x, y2:p.y, class:'edge' + (actif ? ' on' : '') + (p.depth > 1 ? ' deep' : '')}));
+    });
+    fils.forEach(function(f){
+      var parts = arr(f.participants).filter(function(id){ return pos[id]; });
+      var col = 'var(--' + (FILS[f.type] ? f.type : 'coordination') + ')';
+      for (var i = 1; i < parts.length; i++) {
+        var a = pos[parts[0]], b = pos[parts[i]];
+        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, dx = b.x - a.x, dy = b.y - a.y;
+        var cxp = mx - dy * 0.25, cyp = my + dx * 0.25;
+        var path = sv('path', {d:'M' + a.x + ' ' + a.y + ' Q' + cxp + ' ' + cyp + ' ' + b.x + ' ' + b.y, class:'comm' + (f.live ? ' live' : ''), style:'stroke:' + col});
+        path.append(sv('title', null, f.sujet));
+        comms.append(path);
+      }
+    });
+    equipe.forEach(function(m){
+      var p = pos[m.id]; if (!p) return;
+      var col = COLOR[m.type] || 'var(--mem)';
+      var isPres = m.type === 'president', sel = selected === m.id;
+      var node = sv('g', {class:'gnode' + (sel ? ' sel' : '') + ' ' + (m.etat || ''), transform:'translate(' + p.x + ',' + p.y + ')', tabindex:'0', role:'button', 'aria-label':m.nom + ', ' + (ETATS[m.etat] || '')});
+      if (m.etat === 'travail' || m.etat === 'debat') node.append(sv('circle', {r:p.r + 6, class:'halo', style:'stroke:' + col}));
+      node.append(sv('circle', {r:p.r, class:'disc', style:isPres ? 'fill:var(--ceo);stroke:var(--ceo)' : 'stroke:' + col}));
+      node.append(sv('text', {class:isPres ? 'ceo' : 'letter', 'text-anchor':'middle', dy:'.35em', style:isPres ? '' : 'fill:' + col}, isPres ? m.nom : (LETTRE[m.type] || 'A')));
+      if (!isPres) {
+        if (p.depth <= 1) {
+          var t = sv('text', {class:'lbl l1', 'text-anchor':'middle', y:p.r + 17});
+          wrap(m.court || m.nom, 18).forEach(function(line, k){ t.append(sv('tspan', {x:0, dy:k ? '1.15em' : 0}, line)); });
+          node.append(t);
+        } else {
+          var deg = p.a * 180 / Math.PI, flip = Math.cos(p.a) < 0;
+          node.append(sv('text', {class:'lbl', 'text-anchor':flip ? 'end' : 'start', dy:'.35em', transform:'rotate(' + (flip ? deg + 180 : deg) + ') translate(' + (flip ? -(p.r + 6) : p.r + 6) + ',0)'}, m.nom));
+        }
+      }
+      node.addEventListener('click', function(e){ if (dragged) return; e.stopPropagation(); select(m.id); });
+      node.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(m.id); } });
+      nodes.append(node);
+    });
+    var svg = sv('svg', {class:'graph', viewBox:'0 0 ' + GW + ' ' + GH, role:'img', 'aria-label':'Graphe de l’entreprise'}, g);
+    var drag = null;
+    function apply(){ g.setAttribute('transform', 'translate(' + view.x + ',' + view.y + ') scale(' + view.k + ')'); }
+    function ratio(){ return GW / (svg.getBoundingClientRect().width || GW); }
+    svg.addEventListener('pointerdown', function(e){ drag = {x:e.clientX, y:e.clientY, vx:view.x, vy:view.y, moved:false}; dragged = false; });
+    svg.addEventListener('pointermove', function(e){
+      if (!drag) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved && Math.abs(dx) + Math.abs(dy) > 4) { drag.moved = true; dragged = true; try { svg.setPointerCapture(e.pointerId); } catch (err) {} }
+      if (drag.moved) { var r = ratio(); view.x = drag.vx + dx * r; view.y = drag.vy + dy * r; apply(); }
+    });
+    function end(){ drag = null; setTimeout(function(){ dragged = false; }, 0); }
+    svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+    function zoom(f, px, py){
+      var k = Math.max(0.3, Math.min(3, view.k * f)); f = k / view.k;
+      view.x = px - (px - view.x) * f; view.y = py - (py - view.y) * f; view.k = k; apply();
     }
-    return h('section', {class:'panel'}, h('h2', null, 'Organigramme'), org,
+    svg.addEventListener('wheel', function(e){
+      e.preventDefault();
+      var b = svg.getBoundingClientRect(), r = ratio();
+      zoom(e.deltaY < 0 ? 1.12 : 1 / 1.12, (e.clientX - b.left) * r, (e.clientY - b.top) * (GH / (b.height || GH)));
+    }, {passive:false});
+    var tools = h('div', {class:'gtools'},
+      h('button', {type:'button', 'aria-label':'Zoomer', onclick:function(){ zoom(1.2, GW / 2, GH / 2); }}, '+'),
+      h('button', {type:'button', 'aria-label':'Dézoomer', onclick:function(){ zoom(1 / 1.2, GW / 2, GH / 2); }}, '−'),
+      h('button', {type:'button', onclick:function(){ view = fitView(pos); apply(); }}, 'Recentrer'));
+    return h('section', {class:'panel gpanel'},
+      h('div', {class:'ghead'}, h('h2', {style:'margin:0'}, 'L’entreprise'), tools),
+      h('div', {class:'gwrap'}, svg),
       h('div', {class:'legend'},
-        h('span', null, h('i', {class:'sw', style:'background:var(--pres)'}), 'Président'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'Directeur (session enfant)'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--diable)'}), 'Avocat du diable (à part)'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--ctrl)'}), 'Head of Common Sense (contrôle, à part)'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'Membre d’équipe (sous-agent)'),
-        h('span', null, h('i', {class:'sw', style:'background:var(--theo)'}), 'Théophile')));
+        h('span', null, h('i', {class:'sw', style:'background:var(--ceo)'}), 'Président'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'D : directeur (session)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--diable)'}), '! : Avocat du diable'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--ctrl)'}), '✓ : Head of Common Sense'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'M : recrue (sous-agent)'),
+        h('span', null, h('i', {class:'ln'}), 'hiérarchie'),
+        h('span', null, h('i', {class:'ln dash'}), 'échange en cours'),
+        h('span', null, 'glisser pour déplacer, molette pour zoomer')));
   }
 
   function detail(){
@@ -399,7 +552,7 @@ a{color:var(--dir)}
           nLive ? h('span', {class:'chip', style:'border-color:var(--debat);color:var(--debat)'}, nLive + ' fil' + (nLive > 1 ? 's' : '') + ' en cours') : null)),
       consultation(),
       partition(),
-      h('div', {class:'main'}, organigramme(), detail()),
+      h('div', {class:'main'}, graph(), detail()),
       filsPanel(),
       bas()];
     app.replaceChildren.apply(app, parts.filter(Boolean));
