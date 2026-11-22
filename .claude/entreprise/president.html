@@ -5,19 +5,19 @@
 /* Gabarit du tableau /president. Le Président ne modifie QUE le bloc JSON #presidence en bas de page (schéma dans .claude/commands/president.md). */
 :root{
   --bg:#f7f7f6; --surface:#ffffff; --fg:#111111; --muted:#6b6b6b; --line:#e5e5e3; --soft:#f0f0ee;
-  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c;
+  --pres:#111111; --dir:#2f5bd3; --mem:#8a8a8a; --theo:#d6336c; --ctrl:#0b7285;
   --debat:#e03131; --question:#2f5bd3; --coordination:#9a9a9a; --livrable:#2f9e44; --alerte:#e67700;
   --ok:#2f9e44; --warn:#e67700;
   --display:"Inter Tight",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e0e0e; --surface:#171717; --fg:#f2f2f2; --muted:#9a9a9a; --line:#2a2a2a; --soft:#1f1f1f;
-  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595;
+  --pres:#f2f2f2; --dir:#6f93ff; --mem:#8a8a8a; --theo:#f06595; --ctrl:#3bc9db;
   --debat:#ff6b6b; --question:#6f93ff; --coordination:#777777; --livrable:#51cf66; --alerte:#ffa94d;
   --ok:#51cf66; --warn:#ffa94d; color-scheme:dark}
 *{box-sizing:border-box}
@@ -55,6 +55,13 @@ a{color:var(--dir)}
 .card .nm{font-weight:600;font-size:.9rem;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .card .rf{font-size:.8rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .prescard{max-width:340px}
+.toprow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:stretch;width:100%}
+.toprow .card{max-width:340px;flex:1 1 220px}
+.ctrlcard{border-style:dashed;border-top-style:solid}
+.verdict{font-family:var(--mono);font-size:.68rem;font-weight:600;padding:1px 7px;border-radius:999px;color:#fff;white-space:nowrap}
+.verdict.GO{background:var(--ok)} .verdict.NO-GO{background:var(--debat)} .verdict.attente{background:var(--mem)}
+.ctrl{display:flex;flex-direction:column;gap:8px;font-size:.84rem}
+.ctrl div{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:8px}
 .stem{width:2px;height:18px;background:var(--line)}
 .dirs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;width:100%;border-top:2px solid var(--line);padding-top:18px}
 .dircol{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -106,26 +113,97 @@ a{color:var(--dir)}
 
 <script id="presidence" type="application/json">
 {
-  "titre": "Entreprise prête",
-  "probleme": "En attente du problème de Théophile.",
-  "statut": "Le comité fondateur attend sa première mission.",
-  "phase": "cadrage",
-  "partition": [],
-  "equipe": [
-    {"id": "president", "nom": "Président", "type": "president", "parent": null, "session": null, "tableau": null, "etat": "attente", "mission": "Recevoir le problème, composer l'équipe, faire circuler l'information et rendre le résultat.", "reflexion": "J'attends le problème de Théophile.", "historique": [], "recrute": null},
-    {"id": "coo", "nom": "Directeur des opérations", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "Écrire la partition : la méthode propre à ce problème.", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "strategie", "nom": "Directeur de la stratégie", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "cto", "nom": "Directeur technique", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "cfo", "nom": "Directeur financier et des achats", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "produit", "nom": "Directeur produit, marque et contenus", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "recherche", "nom": "Directeur scientifique", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null},
-    {"id": "risques", "nom": "Directeur des risques", "type": "directeur", "parent": "president", "session": null, "tableau": null, "etat": "attente", "mission": "", "reflexion": "", "historique": [], "recrute": null}
-  ],
-  "fils": [],
-  "consultation": null,
-  "livrables": [],
-  "journal": [],
-  "synthese": null
+ "titre": "Entreprise prête",
+ "probleme": "En attente du problème de Théophile.",
+ "statut": "La base de l'entreprise attend sa première mission.",
+ "phase": "cadrage",
+ "partition": [],
+ "equipe": [
+  {
+   "id": "president",
+   "nom": "Président",
+   "type": "president",
+   "parent": null,
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Recevoir le problème, composer l'équipe, faire circuler l'information et rendre le résultat.",
+   "reflexion": "J'attends le problème de Théophile.",
+   "historique": [],
+   "recrute": null
+  },
+  {
+   "id": "bonsens",
+   "nom": "Head of Common Sense",
+   "type": "controle",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Contrôler chaque livrable avant Théophile : GO ou NO-GO.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  },
+  {
+   "id": "coo",
+   "nom": "Directeur des opérations",
+   "type": "directeur",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Écrire la partition : la méthode propre à ce problème.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  },
+  {
+   "id": "strategie",
+   "nom": "Directeur de la stratégie et des finances",
+   "type": "directeur",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Vision, budget, achats et risques.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  },
+  {
+   "id": "technique",
+   "nom": "Directeur technique et scientifique",
+   "type": "directeur",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Code, matériel, 3D, calculs et faits.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  },
+  {
+   "id": "creation",
+   "nom": "Directeur de la création et de la communication",
+   "type": "directeur",
+   "parent": "president",
+   "session": null,
+   "tableau": null,
+   "etat": "attente",
+   "mission": "Produit, design, contenus, vidéo et pédagogie.",
+   "reflexion": "",
+   "historique": [],
+   "recrute": null
+  }
+ ],
+ "fils": [],
+ "consultation": null,
+ "livrables": [],
+ "journal": [],
+ "synthese": null,
+ "controles": []
 }
 </script>
 
@@ -141,7 +219,7 @@ a{color:var(--dir)}
   var nom = function(id){ return byId[id] ? byId[id].nom : id; };
   var ETATS = {attente:'en attente', travail:'au travail', debat:'en débat', fini:'fini', pause:'en pause', archive:'archivé'};
   var FILS = {debat:'débat', question:'question', coordination:'coordination', livrable:'livrable', alerte:'alerte'};
-  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', membre:'var(--mem)', theophile:'var(--theo)'};
+  var COLOR = {president:'var(--pres)', directeur:'var(--dir)', controle:'var(--ctrl)', membre:'var(--mem)', theophile:'var(--theo)'};
   var selected = 'president';
   try { selected = localStorage.getItem('presidence-sel') || selected; } catch (e) {}
   if (!byId[selected]) selected = equipe.length ? equipe[0].id : null;
@@ -184,8 +262,9 @@ a{color:var(--dir)}
     var pres = equipe.filter(function(m){ return m.type === 'president'; })[0];
     var theo = equipe.filter(function(m){ return m.type === 'theophile'; });
     var dirs = equipe.filter(function(m){ return m.type === 'directeur'; });
+    var ctrl = equipe.filter(function(m){ return m.type === 'controle'; });
     var org = h('div', {class:'org'});
-    if (pres) org.append(card(pres, 'prescard'));
+    if (pres) org.append(h('div', {class:'toprow'}, card(pres), ctrl.map(function(c){ return card(c, 'ctrlcard'); })));
     theo.forEach(function(t){ org.append(h('div', {class:'stem'}), card(t, 'prescard')); });
     if (dirs.length) {
       org.append(h('div', {class:'stem'}));
@@ -201,6 +280,7 @@ a{color:var(--dir)}
       h('div', {class:'legend'},
         h('span', null, h('i', {class:'sw', style:'background:var(--pres)'}), 'Président'),
         h('span', null, h('i', {class:'sw', style:'background:var(--dir)'}), 'Directeur (session enfant)'),
+        h('span', null, h('i', {class:'sw', style:'background:var(--ctrl)'}), 'Head of Common Sense (contrôle, à part)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--mem)'}), 'Membre d’équipe (sous-agent)'),
         h('span', null, h('i', {class:'sw', style:'background:var(--theo)'}), 'Théophile')));
   }
@@ -271,7 +351,11 @@ a{color:var(--dir)}
     var blocks = [];
     if (l.length) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Livrables'), h('div', {class:'livr'}, l.map(function(x){
       var u = safeUrl(x.lien);
-      return h('div', null, h('strong', null, u ? h('a', {href:u, target:'_blank', rel:'noopener'}, x.titre) : x.titre), h('span', {class:'muted', style:'font-size:.78rem'}, 'par ' + nom(x.par) + (!u && x.lien ? ' · ' + x.lien : '')), x.resume ? h('span', null, x.resume) : null);
+      return h('div', null, h('strong', {style:'display:flex;gap:8px;align-items:center;flex-wrap:wrap'}, u ? h('a', {href:u, target:'_blank', rel:'noopener'}, x.titre) : x.titre, x.verdict ? h('span', {class:'verdict ' + x.verdict}, x.verdict) : null), h('span', {class:'muted', style:'font-size:.78rem'}, 'par ' + nom(x.par) + (!u && x.lien ? ' · ' + x.lien : '')), x.resume ? h('span', null, x.resume) : null);
+    }))));
+    var ct = arr(data.controles);
+    if (ct.length) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Contrôles du Head of Common Sense'), h('div', {class:'ctrl'}, ct.slice().reverse().map(function(x){
+      return h('div', null, h('span', {class:'verdict ' + (x.verdict || 'attente')}, x.verdict || 'en cours'), h('span', null, h('strong', null, x.livrable + (x.tour ? ' · tour ' + x.tour : '')), h('br'), h('span', {class:'muted'}, 'responsable : ' + nom(x.responsable)), x.defauts ? [h('br'), x.defauts] : null));
     }))));
     if (s) blocks.push(h('section', {class:'panel'}, h('h2', null, 'Synthèse du Président'), h('div', {class:'synth'},
       [['Recommandation', s.recommandation], ['Accords', s.accords], ['Désaccords', s.desaccords], ['Risques', s.risques], ['Prochaine action', s.action]]
