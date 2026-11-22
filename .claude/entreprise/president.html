@@ -37,6 +37,16 @@ a{color:var(--dir)}
 .top{display:flex;flex-direction:column;gap:10px}
 .q{font-size:1rem;max-width:80ch}
 /* Consultation */
+.point{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px}
+@media (max-width:860px){.point{grid-template-columns:1fr}}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pcard h3{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pcard .big{font-size:.95rem;line-height:1.5}
+.steps2{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:st}
+.steps2 li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.86rem;align-items:start}
+.steps2 li::before{counter-increment:st;content:counter(st);font-family:var(--mono);font-size:.7rem;width:20px;height:20px;border-radius:50%;background:var(--soft);display:grid;place-items:center;color:var(--muted)}
+.steps2.dec li::before{content:"\2713";color:var(--ok)}
+.steps2.next li::before{content:"\2192";color:var(--ceo)}
 .consult{border:2px solid var(--theo);background:var(--surface);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .consult.done{border-width:1px;border-color:var(--line)}
 .choice{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.86rem;background:var(--soft)}
@@ -167,6 +177,17 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
  "probleme": "En attente du problème de Théophile.",
  "statut": "La base de l'entreprise attend sa première mission.",
  "phase": "cadrage",
+ "point": {
+  "demande": "En attente du problème de Théophile.",
+  "etat": "L'entreprise est prête : quatre directeurs et deux contre-pouvoirs en veille.",
+  "raisonnement": [],
+  "decisions": [],
+  "prochaines": [
+   "Recevoir le problème",
+   "Faire écrire la partition par le Directeur des opérations",
+   "Réveiller les directeurs utiles"
+  ]
+ },
  "partition": [],
  "equipe": [
   {
@@ -660,6 +681,20 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
     return blocks.length ? h('div', {class:'grid2'}, blocks) : null;
   }
 
+  function pointPanel(){
+    var pt = data.point;
+    if (!pt) return null;
+    function list(items, cls){ items = arr(items); return items.length ? h('ol', {class:'steps2 ' + (cls || '')}, items.map(function(x){ return h('li', null, h('span', null, x)); })) : h('p', {class:'empty'}, 'Rien pour l\u2019instant.'); }
+    return h('section', {class:'point'},
+      h('div', {class:'pcard'},
+        h('h3', null, 'Ta demande'), h('p', {class:'big'}, pt.demande || data.probleme || ''),
+        pt.etat ? [h('h3', null, 'Où on en est'), h('p', null, pt.etat)] : null,
+        h('h3', null, 'Raisonnement du Président'), list(pt.raisonnement)),
+      h('div', {class:'pcard'},
+        h('h3', null, 'Décisions prises'), list(pt.decisions, 'dec'),
+        h('h3', null, 'Prochaines étapes'), list(pt.prochaines, 'next')));
+  }
+
   function render(){
     var app = document.getElementById('app');
     var nDir = equipe.filter(function(m){ return m.type === 'directeur' && m.session; }).length;
@@ -674,6 +709,7 @@ svg.focus .comm.hl{opacity:1;stroke-width:2.4}
           data.phase ? h('span', {class:'chip'}, 'phase : ' + data.phase) : null,
           h('span', {class:'chip'}, nDir + ' session' + (nDir > 1 ? 's' : '') + ' directeur'),
           nLive ? h('span', {class:'chip', style:'border-color:var(--debat);color:var(--debat)'}, nLive + ' fil' + (nLive > 1 ? 's' : '') + ' en cours') : null)),
+      pointPanel(),
       consultation(),
       partition(),
       h('div', {class:'main'}, graph(), detail()),

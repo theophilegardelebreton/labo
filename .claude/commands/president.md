@@ -38,7 +38,7 @@ Chaque session enfant est indépendante : un `/clear` sur ta session ne vide pas
 
 ## Le tableau du Président
 
-1. **Ouverture.** Dès la première action, copie `$CLAUDE_PROJECT_DIR/.claude/entreprise/president.html` dans ton scratchpad sous le nom `president-<nom-court>.html`. Dans le bloc JSON `<script id="presidence">`, remplis `titre`, `probleme` et `statut`, puis publie avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Renomme ta session avec `set_session_title` : « Président · <projet> ».
+1. **Ouverture, avant tout le reste.** Théophile doit voir le tableau s'ouvrir à droite dès qu'il a posé son problème. Ton tout premier appel d'outil copie le gabarit et ton deuxième le publie, avant toute lecture de fiche, tout cadrage et toute création de session. Copie `$CLAUDE_PROJECT_DIR/.claude/entreprise/president.html` dans ton scratchpad sous le nom `president-<nom-court>.html`. Dans le bloc JSON `<script id="presidence">`, remplis `titre`, `probleme`, `statut` et `point.demande` (sa demande, reformulée en une ou deux phrases), puis publie avec l'outil Artifact (`icon: "diagram"`, une `description` d'une phrase). Renomme ta session avec `set_session_title` : « Président · <projet> ».
 2. **Mises à jour.** Ne modifie que le bloc JSON. Après chaque événement (création d'un directeur, partition, rapport, fil entre directeurs, consultation, livrable, synthèse), fais un Edit du JSON puis republie le même fichier dans le même message.
 3. **Le graphe.** Le tableau dessine l'entreprise en étoile autour de toi : directeurs et contre-pouvoirs en premier cercle, recrues en éventail autour de leur chef, à n'importe quelle profondeur (`parent`). Les lignes pleines montrent la hiérarchie, les courbes en pointillés les `fils` (animées quand `live`). On peut zoomer et se déplacer.
 4. **Clic sur un membre.** Le panneau affiche sa mission, sa dernière réflexion, son historique, ses fils de discussion, un lien vers sa session (`https://claude.ai/code/<session_id>`) et un lien vers son propre tableau. Remplis donc `session` et `tableau` dès que tu les connais. Un agent n'a un tableau que s'il dirige au moins deux sous-agents : laisse `tableau` à `null` sinon.
@@ -47,6 +47,7 @@ Chaque session enfant est indépendante : un `/clear` sur ta session ne vide pas
 Schéma du JSON (guillemets droits, pas de virgule finale, pas de retour à la ligne dans les chaînes) :
 
 - `titre`, `probleme`, `statut` (une phrase) et `phase` (le nom de la phase en cours de la partition).
+- `point` résume la conversation, en tête du tableau : `{demande, etat, raisonnement, decisions, prochaines}`. `demande` reformule ce que Théophile veut. `etat` dit où on en est, en une ou deux phrases. `raisonnement` est la liste de tes étapes de pensée (hypothèses, choix d'équipe, pourquoi telle partition). `decisions` liste ce qui est acquis, et `prochaines` ce qui va se passer. Mets-le à jour à chaque événement : Théophile doit comprendre la situation sans relire la conversation.
 - `partition` est une liste `[{n, nom, mode, qui, livrable, cout, etat}]`.
   - `mode` est libre, par exemple `solo`, `parallèle`, `débat`, `vote`, `revue croisée`, `prototype`, `itération de test`, `recherche` ou `consultation`.
   - `qui` est une liste d'`id`.
