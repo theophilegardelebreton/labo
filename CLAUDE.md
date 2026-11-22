@@ -25,3 +25,9 @@ Ponytail v5.3.3 (github.com/DietrichGebert/ponytail, licence MIT, commit dans `.
 Les hooks sont dans `.claude/ponytail/hooks/` et sont déclarés dans `.claude/settings.json`. `SessionStart` injecte les règles au niveau `full`, `SubagentStart` les injecte dans chaque sous-agent, et `UserPromptSubmit` suit les changements de niveau (`/ponytail lite|full|ultra|off`). Les six skills (`/ponytail`, `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-gain`, `/ponytail-help`) sont dans `.claude/ponytail/skills/`, avec des liens symboliques dans `.claude/skills/`. Le tableau de bord « band », son webhook et la barre d'état ne sont pas installés.
 
 `PONYTAIL_DEFAULT_MODE` change le niveau par défaut et `PONYTAIL_MAP=0` coupe la carte du code injectée au démarrage. Pour mettre Ponytail à jour, recloner le dépôt et recopier les mêmes fichiers.
+
+## Second cerveau (dépôt `cerveau`)
+
+Le dépôt privé `theophilegardelebreton/cerveau` est le second cerveau de Théophile : un coffre Obsidian synchronisé avec sa tablette par le plugin Git, branche `main`. Ses règles de rangement sont dans son propre `CLAUDE.md`.
+
+Dans chaque session, quand Théophile communique une information durable (un fait sur lui, ses goûts ou ses objectifs, un projet, une décision, un point de cours) ou un fichier utile, enregistre-la dans le coffre sans attendre qu'il le demande. Si le dépôt n'est pas encore dans la session, rattache-le avec `add_repo` (accès `push`), clone-le, puis applique son `CLAUDE.md`. Fais-le en fin de réponse, en regroupant les infos de l'échange, commite et pousse sur `main`, et signale-le en une ligne (« Noté dans ton cerveau : … »). Avant de commencer un projet, consulte d'abord `00 Index.md` et les notes liées pour reprendre le contexte. N'y écris jamais de mot de passe ni de clé.
