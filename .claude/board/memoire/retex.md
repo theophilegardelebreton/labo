@@ -19,3 +19,6 @@ Le Directeur général relit ce fichier au début de chaque séance `/board` et 
 - Contrôler sur photo la couleur de toutes les pièces dès le premier panier, électronique comprise (VTX, circuit imprimé, câbles, connecteurs, pièces imprimées) : un VTX bleu et un châssis à pièces bleues ont été refusés après coup.
 - Vérifier le contenu des kits (vis, écrous, sangles fournis) avant d'ajouter de la quincaillerie au panier, puis contrôler que la visserie fournie convient à l'épaisseur réelle des pièces.
 - Un plafond budgétaire ferme se tient en chiffrant chaque coupe possible avec le comité, et en recalculant les lots réels (pièces par lot) plutôt que de raisonner à l'unité.
+- Le DG a répondu seul à des questions de suivi posées dans une conversation du conseil : toute question, même factuelle, repasse par le conseil, avec seulement l'agent ou les deux agents concernés.
+- Un contrôle final par un agent neuf et sans contexte a trouvé des contradictions entre deux livrables que les agents impliqués ne voyaient plus : le faire systématiquement avant toute remise.
+- Ne jamais écraser l'historique du tableau (échanges, débats, réflexions) d'une séance à l'autre : on ne peut plus reconstituer ce qui a été dit.
