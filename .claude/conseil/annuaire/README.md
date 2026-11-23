@@ -2,7 +2,7 @@
 
 Chaque fichier est la fiche de poste d'un membre permanent. Elle décrit qui il est (rôle, regard, inspirations, compétences, manière de travailler), jamais un projet. Le Président recrée un conseiller à partir de sa fiche à chaque nouveau projet : le membre garde son identité et repart d'une page blanche.
 
-`type: conseiller` signifie que le membre tourne dans sa propre session enfant, sous le Président. `type: controle` désigne le Head of Common Sense, et `type: contradicteur` l'Avocat du diable : tous deux sont permanents, dans leur propre session, à part du comité. `type: membre` signifie qu'il travaille comme sous-agent dans l'équipe d'un conseiller.
+`type: conseiller` signifie que le membre tourne comme sous-agent du Président, dans sa session. `type: controle` désigne le Head of Common Sense, et `type: contradicteur` l'Avocat du diable : tous deux sont permanents, sous-agents à part du comité. `type: membre` signifie qu'il est une recrue lancée par le Président pour l'équipe d'un conseiller.
 
 La base du conseil compte quatre conseillers polyvalents (opérations, stratégie et finances, technique et scientifique, création et communication) l'Avocat du diable et le Head of Common Sense. Les membres recrutables (Recruteur, Money Maker, Stratège prospectif) et tous les autres profils possibles sont dans `.claude/conseil/catalogue.md`. Le Président n'en convoque que ce dont le problème a besoin, et peut créer un conseiller supplémentaire si aucun ne couvre le sujet.
 

@@ -16,7 +16,7 @@ Avant d'appeler un agent ECC, lis la `description` dans l'en-tête de son fichie
 | `money-maker.md` | maximise les gains à court terme : offre, prix, marge, premiers clients | business, vente, produit commercialisé |
 | `outilleur.md` | trouve, vérifie, installe, crée ou désactive les skills dont l'équipe a besoin | rendu à améliorer, travail répété, outil absent |
 | `visionnaire.md` | Stratège prospectif : scénarios à 1, 3 et 10 ans, potentiel maximal | business, projet à fort potentiel, choix qui engage des années |
-| `avocat-du-diable.md` | contredit tout, par principe | permanent (session à part), mais un conseiller peut aussi en recruter un dans son équipe pour un débat interne |
+| `avocat-du-diable.md` | contredit tout, par principe | permanent (sous-agent à part), mais un conseiller peut aussi en recruter un dans son équipe pour un débat interne |
 
 ## Agents ECC par domaine
 
