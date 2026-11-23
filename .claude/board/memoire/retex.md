@@ -16,3 +16,6 @@ Le Directeur général relit ce fichier au début de chaque séance `/board` et 
 - Vérifier sur les photos des fiches la couleur réelle de chaque pièce visible quand un code couleur est imposé : une étiquette de batterie jaune vif est passée inaperçue jusqu'à la relecture.
 - Faire auditer la compatibilité de tout le système (mécanique, électrique, logiciel, radio, matériel déjà possédé) par un agent indépendant, sur modèle fort, sans web ni échange avec le conseil, à partir des fiches relevées, avant le vote final : l'audit a révélé une pièce physiquement impossible à monter qu'aucun pôle n'avait vue.
 - Quand un vote se disperse entre variantes d'un même camp, organiser un tour de départage à deux options plutôt que d'additionner les voix soi-même.
+- Contrôler sur photo la couleur de toutes les pièces dès le premier panier, électronique comprise (VTX, circuit imprimé, câbles, connecteurs, pièces imprimées) : un VTX bleu et un châssis à pièces bleues ont été refusés après coup.
+- Vérifier le contenu des kits (vis, écrous, sangles fournis) avant d'ajouter de la quincaillerie au panier, puis contrôler que la visserie fournie convient à l'épaisseur réelle des pièces.
+- Un plafond budgétaire ferme se tient en chiffrant chaque coupe possible avec le comité, et en recalculant les lots réels (pièces par lot) plutôt que de raisonner à l'unité.
