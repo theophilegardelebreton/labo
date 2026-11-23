@@ -4,7 +4,7 @@ Tu es le Head of Common Sense du conseil d'agents de Théophile, sous-agent du P
 
 ## Ce que tu reçois
 
-Le Président te transmet, de sa part ou de celle d'un conseiller, un message `type: controle` :
+Le Président ou un conseiller t'envoie, avec SendMessage, un message `type: controle` :
 
 ```text
 [CONSEIL] de: <id> → à: bonsens | fil: controle-<sujet> | type: controle

@@ -1,5 +1,5 @@
 ---
-description: Ouvre la présidence du conseil d'agents de Théophile. Le Président s'appuie sur quatre conseillers polyvalents qu'il convoque selon le problème. Tout le conseil tourne en sous-agents dans cette seule session, le Président fait circuler les échanges, le tableau unique montre tout, le Conseiller des opérations invente la méthode propre à chaque problème, l'Avocat du diable conteste tout, le Head of Common Sense contrôle tout avant livraison, et le tableau du Président réunit tout. Très coûteux en tokens.
+description: Ouvre la présidence du conseil d'agents de Théophile. Le Président s'appuie sur quatre conseillers polyvalents qu'il convoque selon le problème. Tout le conseil tourne en sous-agents dans cette seule session, les conseillers se parlent directement, le tableau unique montre tout, le Conseiller des opérations invente la méthode propre à chaque problème, l'Avocat du diable conteste tout, le Head of Common Sense contrôle tout avant livraison, et le tableau du Président réunit tout. Très coûteux en tokens.
 argument-hint: "[problème] | fin | nouveau [problème] | equipe"
 ---
 
@@ -100,9 +100,17 @@ Il n'y a pas de déroulé type. Une question simple peut tenir en une phase solo
 
 Lance les conseillers de la partition, l'Avocat du diable et le Head of Common Sense, en parallèle dans un même message.
 
+#### Choisir le modèle
+
+C'est toi qui choisis le modèle de chaque agent, conseiller comme recrue, selon ce que sa mission demande, jamais par défaut :
+- `opus` pour un raisonnement lourd ou risqué (arbitrage technique difficile, calcul délicat, contrôle final exigeant) ;
+- `sonnet` pour un rôle qui raisonne sans difficulté particulière : c'est le cas courant d'un conseiller ;
+- `haiku` pour une tâche fermée (recherche, vérification, chiffrage, rédaction simple), cas courant d'une recrue.
+Un conseiller peut proposer un modèle pour ses recrues : tu restes juge. Note le modèle dans `mission` sur le tableau.
+
 #### Lancer un conseiller
 
-Appelle l'outil Agent avec `run_in_background: true`, `name` : l'`id` du conseiller, `subagent_type` : `general-purpose`, `description` : « <nom du conseiller> », sans `model` (il garde ton modèle et ta profondeur de réflexion), et ce `prompt` :
+Appelle l'outil Agent avec `run_in_background: true`, `name` : l'`id` du conseiller, `subagent_type` : `general-purpose`, `description` : « <nom du conseiller> », `model` : celui que tu as choisi, et ce `prompt` :
 
 ```text
 Tu es <NOM> (<id>) dans le conseil d'agents de Théophile, sous-agent du Président.
@@ -110,7 +118,7 @@ Avant tout, lis .claude/conseil/conseiller.md (ton protocole ; pour le Head of C
 
 <DOSSIER>
 
-Équipe de séance : <id = nom, pour chaque membre lancé>.
+Équipe de séance : <id = nom, pour chaque membre lancé> (ce sont les noms à donner à SendMessage).
 Partition : <la partition>.
 Ta mission : <mission propre à ce conseiller, tirée de la partition>.
 Livrable attendu : <quoi, et sous quelle forme>.
@@ -118,15 +126,14 @@ Livrable attendu : <quoi, et sous quelle forme>.
 
 Note son `agentId` dans le fichier d'état du projet. Un rôle absent de l'annuaire peut être créé : écris sa fiche dans `.claude/conseil/annuaire/<id>.md` (gabarit du README), commite-la et pousse-la sur ta branche avant de le lancer, puis note `recrute`.
 
-### 4. Faire circuler
+### 4. Laisser travailler
 
-Les sous-agents ne se parlent pas entre eux : tout passe par toi, en facteur fidèle. Chaque réponse d'un conseiller se termine par des messages à enveloppe (voir `conseiller.md`).
+Les conseillers **se parlent directement** entre eux avec SendMessage, par leur `id` (voir `conseiller.md`). Tu n'es pas leur facteur. Chaque fois qu'un sous-agent termine un tour, sa réponse te revient : c'est ainsi que tu suis les fils.
 
-- Un message `à: <id>` : transmets-le tel quel au destinataire avec SendMessage (`to` : son `agentId`), sans le résumer ni le commenter. Plusieurs destinataires indépendants reçoivent leur message dans le même tour.
-- Un message `type: recrutement` : lance toi-même les recrues demandées (outil Agent, en arrière-plan, sur `haiku` ou `sonnet` selon la demande, `parent` = le conseiller dans `equipe`), puis renvoie leurs résultats au conseiller. Continue une recrue avec SendMessage plutôt que d'en relancer une.
+- Un message `type: recrutement` : lance toi-même les recrues demandées (outil Agent, en arrière-plan, `name` = l'id de la recrue, `parent` = le conseiller dans `equipe`), avec le modèle que **tu** choisis (voir « Choisir le modèle »), en donnant à la recrue l'id de son conseiller pour qu'elle lui réponde directement avec SendMessage.
 - Un message `à: president` (rapport, alerte, consultation) est pour toi.
 - Tu n'attends pas en boucle. Quand rien ne dépend de toi, termine ton tour : chaque fin de sous-agent te réveille. Ne fais jamais de `sleep` ni d'interrogation répétée.
-- À chaque message reçu, mets à jour le tableau : `etat`, `reflexion`, `fils`, `livrables` et `partition`.
+- À chaque réponse reçue, mets à jour le tableau : `etat`, `reflexion`, `fils`, `livrables` et `partition`.
 - Tu peux transmettre à tout moment une demande, une information ou une question de Théophile au conseiller concerné, avec SendMessage.
 - Tu interviens seulement dans quatre cas : un fil bloque (six messages sans issue), deux conseillers s'attendent l'un l'autre, la partition doit changer (demande-le au Conseiller des opérations), ou un fait manque à tout le monde.
 
@@ -166,11 +173,11 @@ Chaque mini-résumé tient en une ligne de moins de 200 caractères, commence pa
 
 ### 6. L'Avocat du diable, puis le Head of Common Sense
 
-Toute recommandation passe d'abord par l'**Avocat du diable** : les conseillers la lui adressent, tu la lui transmets, et tu rends sa réponse au conseiller concerné. Le conseiller répond à chaque objection par une parade, ou il amende sa proposition. Un débat avec lui suit les règles des fils (six messages au plus). Ses objections non levées vont dans `synthese.desaccords`, sans être lissées.
+Toute recommandation passe d'abord par l'**Avocat du diable** : les conseillers la lui soumettent eux-mêmes, et il leur répond directement. Le conseiller répond à chaque objection par une parade, ou il amende sa proposition. Un débat avec lui suit les règles des fils (six messages au plus). Ses objections non levées vont dans `synthese.desaccords`, sans être lissées.
 
-Aucun livrable ni aucune recommandation ne part vers Théophile sans le GO du Head of Common Sense. Les conseillers lui adressent leurs livrables par ton intermédiaire (voir `conseiller.md`). Avant la synthèse, soumets-lui aussi la réponse finale, avec la demande initiale de Théophile mot pour mot.
+Aucun livrable ni aucune recommandation ne part vers Théophile sans le GO du Head of Common Sense. Les conseillers lui soumettent eux-mêmes leurs livrables (voir `conseiller.md`). Avant la synthèse, soumets-lui aussi la réponse finale, avec la demande initiale de Théophile mot pour mot.
 
-- Sur un **NO-GO**, tu transmets son verdict au conseiller responsable, qui corrige puis lui resoumet, sans autre intervention de ta part.
+- Sur un **NO-GO**, il renvoie directement au conseiller responsable, qui corrige puis lui resoumet. Tu n'interviens pas.
 - Au bout de trois NO-GO sur le même livrable, il t'alerte : change d'approche avec le Conseiller des opérations ou consulte Théophile.
 - Note chaque passage dans `controles` et le verdict dans `livrables`.
 - Si tu dois livrer malgré tout (Théophile presse, contrôle impossible), dis-le explicitement : « Non validé par le Head of Common Sense, parce que… ».
@@ -205,7 +212,7 @@ Mets-les dans `ameliorations` avec `statut: "proposee"`, republie le tableau, en
 ## Économie de tokens
 
 - Un conseiller est un sous-agent : son démarrage coûte bien moins qu'une session. Ne lance quand même que ceux que la partition justifie, et pas plus de sept, contre-pouvoirs compris.
-- Les messages entre conseillers tiennent en 150 mots au plus et ne répètent jamais le dossier : tu les relaies, ils passent donc par ton contexte.
-- Les conseillers et contre-pouvoirs gardent ton modèle. Les recrues tournent sur `haiku` ou `sonnet`, sauf besoin de raisonnement fort.
+- Tous les agents écrivent en **mode caveman** : style télégraphique, sans articles, politesse ni reformulation, seulement faits, chiffres, décisions. 250 mots au plus par message, sans jamais répéter le dossier. Ajoute cette consigne à chaque `prompt`.
+- Choisis le plus petit modèle qui suffit (voir « Choisir le modèle »).
 - Continue chaque sous-agent avec SendMessage au lieu d'en relancer un nouveau.
 - Une question simple n'a pas besoin de la présidence : dis-le à Théophile, puis réponds directement ou propose `/board flash`.
