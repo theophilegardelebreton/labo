@@ -248,7 +248,8 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
     {"id": "dg", "nom": "Directeur général", "groupe": "direction", "modele": "fort", "etat": "parle", "regard": "Cadre, recrute, organise les débats, ne vote pas.", "reflexion": "J'attends le sujet pour cadrer la question et composer l'équipe."},
     {"id": "strat", "nom": "Stratège", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Vision à long terme, cohérence avec tes objectifs, portes qu'on ferme.", "reflexion": "Prêt."},
     {"id": "fin", "nom": "Financier", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Coûts, temps investi, retour attendu, ressources rares.", "reflexion": "Prêt."},
-    {"id": "diable", "nom": "Avocat du diable", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Attaque les hypothèses, cherche le scénario d'échec, défend l'option oubliée.", "reflexion": "Prêt."}
+    {"id": "diable", "nom": "Avocat du diable", "groupe": "comite", "modele": "fort", "etat": "attente", "regard": "Attaque les hypothèses, cherche le scénario d'échec, défend l'option oubliée.", "reflexion": "Prêt."},
+    {"id": "bonsens", "nom": "Head of Common Sense", "groupe": "controle", "modele": "fort", "etat": "attente", "regard": "Sans aucun contexte : relit le livrable final, vérifie tout lui-même, GO ou NO-GO avant toi.", "reflexion": "Prêt."}
   ],
   "interactions": [],
   "debats": [],
@@ -257,6 +258,7 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
   "modules": [],
   "vivier": [
     {"pole": "Comité de direction", "roles": [["Stratège", 1], ["Financier", 1], ["Avocat du diable", 1]]},
+    {"pole": "Contrôle", "roles": [["Head of Common Sense", 1]]},
     {"pole": "Ingénierie et tech", "roles": [["Responsable", 0], ["Développeur", 0], ["Calcul et simulation", 0], ["Électronique", 0]]},
     {"pole": "Produit et design", "roles": [["Responsable", 0], ["Designer", 0], ["Ergonomie", 0]]},
     {"pole": "Marché et communication", "roles": [["Responsable", 0], ["Réseaux sociaux", 0], ["Rédacteur", 0], ["Études de marché", 0]]},
@@ -277,9 +279,9 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
   var d;try{d=JSON.parse($("seance").textContent);}catch(e){$("statut").textContent="Le dossier de séance est illisible : "+e.message;return;}
   ["options","agents","interactions","debats","votes","modules","vivier","journal"].forEach(function(k){if(!Array.isArray(d[k]))d[k]=[];});
   var A={};d.agents.forEach(function(a){A[a.id]=a;});
-  var GC={direction:"var(--dir)",comite:"var(--comite)",pole:"var(--pole)",specialiste:"var(--spe)",theophile:"var(--theo)"};
-  var GN={direction:"Direction",comite:"Comité de direction",pole:"Pôles",specialiste:"Spécialistes",theophile:"Toi"};
-  var G1={direction:"Direction",comite:"Comité",pole:"Pôle",specialiste:"Spécialiste",theophile:"Toi"};
+  var GC={direction:"var(--dir)",comite:"var(--comite)",controle:"#8a0303",pole:"var(--pole)",specialiste:"var(--spe)",theophile:"var(--theo)"};
+  var GN={direction:"Direction",comite:"Comité de direction",controle:"Contrôle",pole:"Pôles",specialiste:"Spécialistes",theophile:"Toi"};
+  var G1={direction:"Direction",comite:"Comité",controle:"Contrôle",pole:"Pôle",specialiste:"Spécialiste",theophile:"Toi"};
   var IC={debat:"var(--debat)",question:"var(--question)",reponse:"var(--reponse)",delegation:"var(--delegation)",consultation:"var(--consult)"};
   var IN={debat:"Débat",question:"Question",reponse:"Réponse",delegation:"Délégation",consultation:"Consultation"};
   var ET={attente:"En attente",reflexion:"Réfléchit…",parle:"Parle",fini:"Position rendue",pause:"En pause"};
@@ -305,7 +307,7 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
   else $("projet").hidden=true;
 
   // Frise
-  var STEPS=[["cadrage","Cadrage"],["composition","Équipe"],["tour1","Tour 1"],["debats","Face-à-face"],["premortem","Contre-expertise"],["vote","Vote"],["atelier","Atelier"],["synthese","Synthèse"]];
+  var STEPS=(Array.isArray(d.etapes)&&d.etapes.length)?d.etapes.map(function(s){return [s.id,s.nom||s.id];}):[["cadrage","Cadrage"],["composition","Équipe"],["tour1","Tour 1"],["debats","Face-à-face"],["premortem","Contre-expertise"],["vote","Vote"],["atelier","Atelier"],["synthese","Synthèse"]];
   var skip=d.sauter||[];
   var si=d.etape==="termine"?STEPS.length:STEPS.findIndex(function(s){return s[0]===d.etape;});
   $("steps").innerHTML=STEPS.map(function(s,i){return '<li class="'+(skip.indexOf(s[0])>=0?"skip":i<si?"done":i===si?"now":"")+'">'+s[1]+"</li>";}).join("");
@@ -380,8 +382,11 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
     function ratio(){return GW/(tree.getBoundingClientRect().width||GW);}
     function zoom(f,px,py,smooth){var k=Math.max(.3,Math.min(3,v.k*f));f=k/v.k;var t={x:px-(px-v.x)*f,y:py-(py-v.y)*f,k:k};if(smooth)animateTo(t,320);else{v=t;apply();}}
     apply();
-    tree.addEventListener("pointerdown",function(e){if(anim){cancelAnimationFrame(anim);anim=null;}drag={x:e.clientX,y:e.clientY,vx:v.x,vy:v.y};moved=false;});
-    tree.addEventListener("pointermove",function(e){if(!drag)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!moved&&Math.abs(dx)+Math.abs(dy)>4){moved=true;tree.classList.add("dragging");hover(null);try{tree.setPointerCapture(e.pointerId);}catch(er){}}if(moved){var r=ratio();v.x=drag.vx+dx*r;v.y=drag.vy+dy*r;apply();}});
+    var pts={},pinch=null;function two(){var k=Object.keys(pts);return k.length===2?[pts[k[0]],pts[k[1]]]:null;}
+    tree.addEventListener("pointerdown",function(e){if(anim){cancelAnimationFrame(anim);anim=null;}pts[e.pointerId]={x:e.clientX,y:e.clientY};var t=two();if(t){var b=tree.getBoundingClientRect();pinch={d:Math.hypot(t[0].x-t[1].x,t[0].y-t[1].y)||1,k:v.k,vx:v.x,vy:v.y,mx:((t[0].x+t[1].x)/2-b.left)*ratio(),my:((t[0].y+t[1].y)/2-b.top)*ratio()};drag=null;moved=true;try{tree.setPointerCapture(e.pointerId);}catch(er){}return;}drag={x:e.clientX,y:e.clientY,vx:v.x,vy:v.y};moved=false;});
+    tree.addEventListener("pointermove",function(e){if(!pts[e.pointerId])return;pts[e.pointerId]={x:e.clientX,y:e.clientY};var t=two();if(!pinch||!t)return;var b=tree.getBoundingClientRect(),dd=Math.hypot(t[0].x-t[1].x,t[0].y-t[1].y),k=Math.max(.3,Math.min(3,pinch.k*dd/pinch.d)),f=k/pinch.k,mx=((t[0].x+t[1].x)/2-b.left)*ratio(),my=((t[0].y+t[1].y)/2-b.top)*ratio();v={k:k,x:mx-(pinch.mx-pinch.vx)*f,y:my-(pinch.my-pinch.vy)*f};apply();hover(null);});
+    function unpt(e){delete pts[e.pointerId];if(Object.keys(pts).length<2)pinch=null;}tree.addEventListener("pointerup",unpt);tree.addEventListener("pointercancel",unpt);
+    tree.addEventListener("pointermove",function(e){if(!drag||pinch)return;var dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!moved&&Math.abs(dx)+Math.abs(dy)>4){moved=true;tree.classList.add("dragging");hover(null);try{tree.setPointerCapture(e.pointerId);}catch(er){}}if(moved){var r=ratio();v.x=drag.vx+dx*r;v.y=drag.vy+dy*r;apply();}});
     function end(){drag=null;tree.classList.remove("dragging");setTimeout(function(){moved=false;},0);}
     tree.addEventListener("pointerup",end);tree.addEventListener("pointercancel",end);
     tree.addEventListener("click",function(e){if(moved){e.stopPropagation();e.preventDefault();}},true);
@@ -412,7 +417,7 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
   $("legend").innerHTML=Object.keys(GC).map(function(k){return '<span><i class="sw" style="background:'+GC[k]+'"></i>'+GN[k]+"</span>";}).join("")+Object.keys(IC).map(function(k){return '<span><i class="ln" style="border-color:'+IC[k]+'"></i>'+IN[k]+"</span>";}).join("")+"<span>Pastille = option défendue</span>";
 
   // Agents par niveau
-  var ORDER=["direction","comite","pole","specialiste"];
+  var ORDER=["direction","comite","controle","pole","specialiste"];
   $("agentsCount").textContent=actifs.length+" actif"+(actifs.length>1?"s":"");
   $("levels").innerHTML=ORDER.map(function(g){var L=d.agents.filter(function(a){return a.groupe===g;});if(!L.length)return "";
     return '<div class="lvl"><h3><span class="dot" style="background:'+GC[g]+'"></span>'+GN[g]+' <span class="num">'+L.length+'</span></h3><div class="acards">'+L.map(function(a){
@@ -436,9 +441,15 @@ table.t td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabul
     if(a.position)h+='<dt>Position</dt><dd><span class="opt" style="background:'+oc(a.position)+'">'+esc(a.position)+"</span> "+(a.confiance?confBars(a.confiance):"")+"</dd>";
     h+='</dl><div class="think">'+esc(a.reflexion||"Pas encore de raisonnement.")+"</div>";
     if(mine.length)h+='<span class="eyebrow">Ses échanges</span><div class="msgs">'+mine.map(function(e){var t=IC[e.type]?e.type:"question";return '<div class="msg"><span class="tag" style="background:'+IC[t]+'">'+IN[t]+"</span><span><b>"+esc(short(nm(e.de)))+" → "+esc(short(nm(e.vers)))+"</b> : "+esc(e.texte)+"</span></div>";}).join("")+"</div>";
-    if(d.interactions.length)h+='<button type="button" class="btn" id="all">Voir tous les échanges</button>';
+    h+='<button type="button" class="btn" id="all">Voir tout l\'historique</button>';
     $("side").innerHTML=h;
-    if($("all"))$("all").onclick=function(){document.querySelectorAll("#edges .edge").forEach(function(e){e.setAttribute("opacity",".85");e.setAttribute("stroke-width","2.2");});document.querySelectorAll(".sel").forEach(function(n){n.classList.remove("sel");});};
+    if($("all"))$("all").onclick=function(){document.querySelectorAll("#edges .edge").forEach(function(e){e.setAttribute("opacity",".85");e.setAttribute("stroke-width","2.2");});document.querySelectorAll(".sel").forEach(function(n){n.classList.remove("sel");});
+      var x='<span class="eyebrow">Historique complet de la séance</span><button type="button" class="btn" id="back">&larr; Retour à '+esc(short(a.nom))+'</button>';
+      if((a.historique||[]).length)x+='<h3>Raisonnements de '+esc(short(a.nom))+'</h3><div class="msgs">'+a.historique.map(function(r){return '<div class="msg"><span><b>'+esc(r.etape)+'</b> · '+esc(r.texte)+'</span></div>';}).join("")+'</div>';
+      x+='<h3>Tous les échanges ('+d.interactions.length+')</h3><div class="msgs">'+d.interactions.map(function(e){var t=IC[e.type]?e.type:"question";return '<div class="msg"><span class="tag" style="background:'+IC[t]+'">'+IN[t]+"</span><span><b>"+esc(short(nm(e.de)))+" → "+esc(short(nm(e.vers)))+"</b> : "+esc(e.texte)+"</span></div>";}).join("")+'</div>';
+      d.debats.forEach(function(db){x+='<h3>Face-à-face : '+esc(db.sujet)+'</h3><div class="msgs">'+(db.echanges||[]).map(function(m){return '<div class="msg"><span><b>'+esc(short(nm(m.qui)))+'</b> : '+esc(m.texte)+'</span></div>';}).join("")+(db.issue?'<p class="note">'+esc(db.issue)+'</p>':'')+'</div>';});
+      if(d.journal.length)x+='<h3>Journal</h3><div class="msgs">'+d.journal.map(function(j){return '<div class="msg"><span><b>'+esc(j.t)+'</b> · '+esc(j.texte)+'</span></div>';}).join("")+'</div>';
+      $("side").innerHTML=x;$("side").scrollTop=0;$("back").onclick=function(){select(id);};};
   }
   document.querySelectorAll(".node,.acard").forEach(function(n){n.addEventListener("click",function(){select(n.dataset.id);});n.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();select(n.dataset.id);}});});
   var talking=d.agents.filter(function(a){return a.etat==="parle"||a.etat==="reflexion";})[0];
